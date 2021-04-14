@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InventoryDemo.Models
 {
-    public class Purchase
+    public class Purchase : BaseEntity
     {
         public int PurchaseId { get; set; }
 
@@ -15,6 +15,10 @@ namespace InventoryDemo.Models
         public decimal Quantity { get; set; }
 
         public DateTime Date { get; set; }
+
+        public virtual Product Product { get; set; }
+
+        public virtual Supplier Supplier { get; set; }
 
         public override bool Equals(object obj) => obj is Purchase purchase && purchase.PurchaseId == PurchaseId;
 
