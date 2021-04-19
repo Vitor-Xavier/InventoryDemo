@@ -36,10 +36,10 @@ namespace InventoryDemo
                     .UseSqlServer(Configuration.GetConnectionString("InventoryDatabase")));
 
             services.ConfigureBackgroundServices();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "InventoryDemo", Version = "v1" });
-            });
+            services.ConfigureServices();
+            services.ConfigureRepositories();
+            services.ConfigureSwagger();
+            services.ConfigureAuthentication(Configuration);
 
             services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
@@ -68,11 +68,12 @@ namespace InventoryDemo
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers().RequireAuthorization();
             });
         }
     }

@@ -1,4 +1,9 @@
 ﻿namespace InventoryDemo.Crosscutting
 {
-    public record AppSettings(string Secret, int ExpiresIn);
+    public record AppSettings
+    {
+        public string Secret { get; set; }
+
+        public int ExpiresIn { get; set; }
+    }
 }
