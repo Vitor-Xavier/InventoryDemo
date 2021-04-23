@@ -23,11 +23,13 @@ namespace InventoryDemo.Extensions
     {
         public static void ConfigureServices(this IServiceCollection services)
         {
+            services.AddScoped<ISupplierService, SupplierService>();
             services.AddScoped<IUserService, UserService>();
         }
 
         public static void ConfigureRepositories(this IServiceCollection services)
         {
+            services.AddScoped<ISupplierRepository, SupplierRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
         }
 
