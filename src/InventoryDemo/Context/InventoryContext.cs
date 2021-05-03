@@ -1,5 +1,9 @@
 ﻿using InventoryDemo.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace InventoryDemo.Context
 {
@@ -28,6 +32,50 @@ namespace InventoryDemo.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<OrderProduct>().HasKey(o => new { o.OrderId, o.ProductId });
+        }
+
+        public override int SaveChanges()
+        {
+            var entities = ChangeTracker.Entries().Where(x => x.Entity is BaseEntity && (x.State == EntityState.Added || x.State == EntityState.Modified));
+
+            foreach (var entity in entities)
+            {
+                if (entity.State == EntityState.Added)
+                {
+                    ((BaseEntity)entity.Entity).CreatedAt = DateTime.Now;
+                    ((BaseEntity)entity.Entity).UpdatedAt = DateTime.Now;
+                }
+                else
+                {
+
+                    Entry(((BaseEntity)entity.Entity)).Property(x => x.CreatedAt).IsModified = false;
+                    ((BaseEntity)entity.Entity).UpdatedAt = DateTime.Now;
+                }
+            }
+
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var entities = ChangeTracker.Entries().Where(x => x.Entity is BaseEntity && (x.State == EntityState.Added || x.State == EntityState.Modified));
+
+            foreach (var entity in entities)
+            {
+                if (entity.State == EntityState.Added)
+                {
+                    ((BaseEntity)entity.Entity).CreatedAt = DateTime.Now;
+                    ((BaseEntity)entity.Entity).UpdatedAt = DateTime.Now;
+                }
+                else
+                {
+
+                    Entry(((BaseEntity)entity.Entity)).Property(x => x.CreatedAt).IsModified = false;
+                    ((BaseEntity)entity.Entity).UpdatedAt = DateTime.Now;
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }
