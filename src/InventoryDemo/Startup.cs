@@ -1,5 +1,8 @@
+using InventoryDemo.BackgroundServices.ScheduledServices;
 using InventoryDemo.Context;
 using InventoryDemo.Extensions;
+using InventoryDemo.Services.Cache;
+using InventoryDemo.Services.Orders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.IO.Compression;
@@ -34,6 +38,16 @@ namespace InventoryDemo
                 options.UseLoggerFactory(loggerFactory)
                     .EnableSensitiveDataLogging()
                     .UseSqlServer(Configuration.GetConnectionString("InventoryDatabase")));
+
+            services.AddSingleton<IConnectionMultiplexer>(c =>
+                ConnectionMultiplexer.Connect(Configuration.GetConnectionString("RedisConnection")));
+            services.AddSingleton<ICacheService, RedisCacheService>();
+
+            services.AddCronJob<OrderJobService>(c =>
+            {
+                c.TimeZoneInfo = TimeZoneInfo.Local;
+                c.CronExpression = @"*/1 * * * *";
+            });
 
             services.ConfigureBackgroundServices();
             services.ConfigureServices();

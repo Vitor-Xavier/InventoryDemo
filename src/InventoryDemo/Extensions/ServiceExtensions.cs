@@ -1,9 +1,11 @@
 ﻿using InventoryDemo.BackgroundServices.QueuedServices;
 using InventoryDemo.BackgroundServices.ScheduledServices;
 using InventoryDemo.Crosscutting;
+using InventoryDemo.Repositories.Orders;
 using InventoryDemo.Repositories.Products;
 using InventoryDemo.Repositories.Suppliers;
 using InventoryDemo.Repositories.Users;
+using InventoryDemo.Services.Orders;
 using InventoryDemo.Services.Products;
 using InventoryDemo.Services.Suppliers;
 using InventoryDemo.Services.Users;
@@ -25,6 +27,7 @@ namespace InventoryDemo.Extensions
         {
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ISupplierService, SupplierService>();
+            services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IUserService, UserService>();
         }
 
@@ -32,6 +35,7 @@ namespace InventoryDemo.Extensions
         {
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ISupplierRepository, SupplierRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
         }
 
