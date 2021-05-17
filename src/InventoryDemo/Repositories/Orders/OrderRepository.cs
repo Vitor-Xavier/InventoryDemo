@@ -16,6 +16,15 @@ namespace InventoryDemo.Repositories.Orders
         public IAsyncEnumerable<OrderDto> GetOrders() =>
             _context.Orders.AsNoTracking().Select(order => new OrderDto(order.OrderId, order.Date, order.Note)).AsAsyncEnumerable();
 
+        public IAsyncEnumerable<OrderExportDto> GetOrdersWithProducts() =>
+            _context.Orders.AsNoTracking().Select(o => new OrderExportDto
+            {
+                OrderId = o.OrderId,
+                Date = o.Date,
+                Note = o.Note,
+                Products = o.OrderProducts.Select(p => new ProductOrderDto(p.ProductId, p.Product.Code, p.Product.Name, p.Quantity, p.Product.PricePerUnit, p.Quantity * p.Product.PricePerUnit))
+            }).AsAsyncEnumerable();
+
         public Task<OrderDto> GetOrder(int orderId, CancellationToken cancellationToken = default) =>
             _context.Orders.AsNoTracking().Where(order => order.OrderId == orderId).Select(order => new OrderDto(order.OrderId, order.Date, order.Note)).FirstOrDefaultAsync(cancellationToken);
 

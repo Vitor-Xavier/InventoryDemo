@@ -10,6 +10,8 @@ namespace InventoryDemo.Repositories.Orders
     {
         IAsyncEnumerable<OrderDto> GetOrders();
 
+        IAsyncEnumerable<OrderExportDto> GetOrdersWithProducts();
+
         Task<OrderDto> GetOrder(int orderId, CancellationToken cancellationToken = default);
 
         Task<IEnumerable<OrderTableDto>> GetOrders(int skip, int take, CancellationToken cancellationToken = default);

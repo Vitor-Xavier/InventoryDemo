@@ -19,5 +19,7 @@ namespace InventoryDemo.Services.Orders
         Task UpdateOrder(int orderId, Order order, CancellationToken cancellationToken = default);
 
         Task DeleteOrder(int orderId, CancellationToken cancellationToken = default);
+
+        Task<string> ExportOrder(CancellationToken cancellationToken = default);
     }
 }

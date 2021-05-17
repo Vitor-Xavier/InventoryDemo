@@ -4,6 +4,8 @@ using InventoryDemo.Repositories.Orders;
 using InventoryDemo.Services.Cache;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -74,6 +76,31 @@ namespace InventoryDemo.Services.Orders
 
             await _orderRepository.Delete(order, cancellationToken);
             await _cacheService.DeleteCacheValue($"orders:{orderId}");
+        }
+
+        public async Task<string> ExportOrder(CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var stringBuilder = new StringBuilder();
+
+            await foreach (var order in _orderRepository.GetOrdersWithProducts())
+            {
+                stringBuilder.AppendLine($"Order {order.OrderId} {order.Date:dd/MM/yyyy HH:mm:ss}");
+                stringBuilder.AppendLine(order.Note);
+                stringBuilder.AppendLine();
+
+                stringBuilder.AppendLine("Id,Name,Code,Price Per Unit,Quantity,Price");
+                foreach (var product in order.Products)
+                    stringBuilder.AppendLine($"{product.ProductId},{product.Name},{product.Code},{product.PricePerUnit},{product.Quantity},{product.TotalPrice}");
+
+                stringBuilder.AppendLine();
+            }
+
+            string path = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid()}-Order.csv");
+            await File.AppendAllTextAsync(path, stringBuilder.ToString(), Encoding.UTF8, cancellationToken);
+
+            return path;
         }
 
         public bool IsValid(Order order) => order is { Date: { Year: >= 2021 } };
