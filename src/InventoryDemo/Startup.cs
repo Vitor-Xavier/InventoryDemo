@@ -1,24 +1,21 @@
 using InventoryDemo.BackgroundServices.ScheduledServices;
 using InventoryDemo.Context;
+using InventoryDemo.Events;
 using InventoryDemo.Extensions;
 using InventoryDemo.Services.Cache;
 using InventoryDemo.Services.Orders;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
 using System.IO.Compression;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace InventoryDemo
@@ -63,11 +60,12 @@ namespace InventoryDemo
                 options.Providers.Add<GzipCompressionProvider>();
             });
 
+            services.AddRabbitMQ();
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, InventoryContext context)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, InventoryContext context, IBus bus)
         {
             if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
@@ -89,6 +87,12 @@ namespace InventoryDemo
             {
                 endpoints.MapControllers().RequireAuthorization();
             });
+
+            var updateOrder = new Task(async () =>
+            {
+                await bus.Publish(new OrderEvent { RequestedAt = DateTime.Now, ForceUpdate = false });
+            });
+            updateOrder.RunSynchronously();
         }
     }
 }

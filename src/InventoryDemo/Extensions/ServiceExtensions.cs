@@ -1,5 +1,7 @@
-﻿using InventoryDemo.BackgroundServices.QueuedServices;
+﻿using GreenPipes;
+using InventoryDemo.BackgroundServices.QueuedServices;
 using InventoryDemo.BackgroundServices.ScheduledServices;
+using InventoryDemo.Consumers;
 using InventoryDemo.Crosscutting;
 using InventoryDemo.Repositories.Orders;
 using InventoryDemo.Repositories.Products;
@@ -9,6 +11,7 @@ using InventoryDemo.Services.Orders;
 using InventoryDemo.Services.Products;
 using InventoryDemo.Services.Suppliers;
 using InventoryDemo.Services.Users;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -104,6 +107,44 @@ namespace InventoryDemo.Extensions
                     ValidateAudience = false,
                 };
             });
+        }
+
+        public static void AddRabbitMQ(this IServiceCollection services)
+        {
+            services.AddMassTransit(config =>
+            {
+                config.AddConsumer<OrderConsumer>(consumerConfig =>
+                {
+                    consumerConfig.UseConcurrencyLimit(1);
+
+                    consumerConfig.UseRetry(retryConfig =>
+                    {
+                        retryConfig.Interval(3, TimeSpan.FromMilliseconds(5000));
+                    });
+                });
+                
+                config.AddConsumer<OrderExportConsumer>(consumerConfig =>
+                {
+                    consumerConfig.UseConcurrencyLimit(3);
+
+                    consumerConfig.UseRetry(retryConfig =>
+                    {
+                        retryConfig.Interval(3, TimeSpan.FromMilliseconds(5000));
+                    });
+                });
+
+                config.UsingRabbitMq((context, configure) =>
+                {
+                    configure.Host("rabbitmq://localhost", h =>
+                    {
+                        h.Username("guest");
+                        h.Password("guest");
+                    });
+
+                    configure.ConfigureEndpoints(context);
+                });
+            });
+            services.AddMassTransitHostedService();
         }
 
         public static void ConfigureSwagger(this IServiceCollection services) =>
