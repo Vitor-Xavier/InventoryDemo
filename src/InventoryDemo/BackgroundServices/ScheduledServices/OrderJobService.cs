@@ -34,7 +34,7 @@ namespace InventoryDemo.BackgroundServices.ScheduledServices
             var cacheService = scopeService.ServiceProvider.GetService<ICacheService>();
             
             var latestUpdate = await cacheService.GetCacheValue<DateTime>("latest.update:orders");
-            if (latestUpdate < DateTime.Now.AddHours(-1))
+            if (latestUpdate <= DateTime.Now.AddHours(-1))
             {
                 _logger.LogInformation($"{DateTime.Now:dd/MM/yyyy HH:mm:ss} Atualização de pedidos iniciada.");
                 try
