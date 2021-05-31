@@ -22,7 +22,7 @@ namespace InventoryDemo.Repositories.Orders
                 OrderId = o.OrderId,
                 Date = o.Date,
                 Note = o.Note,
-                Products = o.OrderProducts.Select(p => new ProductOrderDto(p.ProductId, p.Product.Code, p.Product.Name, p.Quantity, p.Product.PricePerUnit, p.Quantity * p.Product.PricePerUnit))
+                Products = o.OrderProducts.Select(p => new ProductOrderDto(p.ProductId, p.Product.Name, p.Product.Code, p.Quantity, p.Product.PricePerUnit, p.Quantity * p.Product.PricePerUnit))
             }).AsAsyncEnumerable();
 
         public Task<OrderDto> GetOrder(int orderId, CancellationToken cancellationToken = default) =>
