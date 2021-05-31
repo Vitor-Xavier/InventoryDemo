@@ -3,10 +3,13 @@ using InventoryDemo.BackgroundServices.QueuedServices;
 using InventoryDemo.BackgroundServices.ScheduledServices;
 using InventoryDemo.Consumers;
 using InventoryDemo.Crosscutting;
+using InventoryDemo.Repositories.OrderExports;
 using InventoryDemo.Repositories.Orders;
 using InventoryDemo.Repositories.Products;
 using InventoryDemo.Repositories.Suppliers;
 using InventoryDemo.Repositories.Users;
+using InventoryDemo.Services.OrderExportCancellationHashs;
+using InventoryDemo.Services.OrderExports;
 using InventoryDemo.Services.Orders;
 using InventoryDemo.Services.Products;
 using InventoryDemo.Services.Suppliers;
@@ -32,6 +35,9 @@ namespace InventoryDemo.Extensions
             services.AddScoped<ISupplierService, SupplierService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IOrderExportService, OrderExportService>();
+
+            services.AddSingleton<IOrderExportCancellationHash, OrderExportCancellationHash>();
         }
 
         public static void ConfigureRepositories(this IServiceCollection services)
@@ -40,6 +46,7 @@ namespace InventoryDemo.Extensions
             services.AddScoped<ISupplierRepository, SupplierRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IOrderExportRepository, OrderExportRepository>();
         }
 
         public static void ConfigureBackgroundServices(this IServiceCollection services)

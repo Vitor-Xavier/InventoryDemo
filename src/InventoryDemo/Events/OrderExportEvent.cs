@@ -2,6 +2,6 @@
 {
     public class OrderExportEvent
     {
-        public int OrderId { get; set; }
+        public int OrderExportId { get; set; }
     }
 }
