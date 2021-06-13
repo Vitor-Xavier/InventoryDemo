@@ -20,11 +20,24 @@ namespace InventoryDemo.Controllers
         /// <param name="skip">Quantidade de itens a pular</param>
         /// <param name="take">Quantidade de itens a retrair</param>
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
-        /// <returns>Tabela de Fornecedores</returns>
+        /// <returns>Tabela de Produtos</returns>
         [HttpGet]
         public async Task<IActionResult> GetProducts(int skip = 0, int take = 10, CancellationToken cancellationToken = default)
         {
             var suppliers = await _productService.GetProducts(skip, take, cancellationToken);
+            return Ok(suppliers);
+        }
+
+        /// <summary>
+        /// Busca de Produto.
+        /// </summary>
+        /// <param name="productId">Identificação do Produto</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisição</param>
+        /// <returns>Produto</returns>
+        [HttpGet("{productId:int}")]
+        public async Task<IActionResult> GetProduct(int productId, CancellationToken cancellationToken = default)
+        {
+            var suppliers = await _productService.GetProduct(productId, cancellationToken);
             return Ok(suppliers);
         }
 

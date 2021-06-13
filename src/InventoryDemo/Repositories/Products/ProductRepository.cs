@@ -13,6 +13,9 @@ namespace InventoryDemo.Repositories.Products
     {
         public ProductRepository(InventoryContext context) : base(context) { }
 
+        public async Task<ProductDto> GetProduct(int productId, CancellationToken cancellationToken = default) =>
+            await _context.Products.AsNoTracking().Where(product => product.ProductId == productId).Select(product => new ProductDto(product.ProductId, product.Name, product.Code, product.Description, product.PricePerUnit, product.MinimumRequired)).FirstOrDefaultAsync(cancellationToken);
+        
         public async Task<IEnumerable<ProductTableDto>> GetProducts(int skip, int take, CancellationToken cancellationToken = default) =>
             await _context.Products.AsNoTracking().OrderBy(product => product.Name).Select(product => new ProductTableDto(product.ProductId, product.Name, product.Description, product.PricePerUnit)).Skip(skip).Take(take).ToListAsync(cancellationToken);
 

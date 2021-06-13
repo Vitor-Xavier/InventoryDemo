@@ -17,6 +17,9 @@ namespace InventoryDemo.Services.Products
             _productRepository = productRepository;
         }
 
+        public Task<ProductDto> GetProduct(int productId, CancellationToken cancellationToken = default) =>
+            _productRepository.GetProduct(productId, cancellationToken);
+
         public Task<IEnumerable<ProductTableDto>> GetProducts(int skip, int take, CancellationToken cancellationToken = default) =>
             _productRepository.GetProducts(skip, take, cancellationToken);
 
