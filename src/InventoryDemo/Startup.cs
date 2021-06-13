@@ -46,6 +46,7 @@ namespace InventoryDemo
                 c.CronExpression = @"*/1 * * * *";
             });
 
+            services.ConfigureCors();
             services.ConfigureBackgroundServices();
             services.ConfigureServices();
             services.ConfigureRepositories();
@@ -72,6 +73,7 @@ namespace InventoryDemo
 
             context.Database.EnsureCreated();
             app.UseResponseCompression();
+            app.UseCors("CorsPolicy");
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "InventoryDemo v1"));
