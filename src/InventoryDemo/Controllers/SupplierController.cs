@@ -29,6 +29,19 @@ namespace InventoryDemo.Controllers
         }
 
         /// <summary>
+        /// Busca Fornecedor.
+        /// </summary>
+        /// <param name="supplierId">Identificador do Fornecedor</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisição</param>
+        /// <returns>Fornecedor</returns>
+        [HttpGet("{supplierId:int}")]
+        public async Task<IActionResult> GetSupplier(int supplierId, CancellationToken cancellationToken = default)
+        {
+            var suppliers = await _supplierService.GetSupplier(supplierId, cancellationToken);
+            return Ok(suppliers);
+        }
+
+        /// <summary>
         /// Insere Fornecedor.
         /// </summary>
         /// <param name="supplier">Dados do Fornecedor</param>

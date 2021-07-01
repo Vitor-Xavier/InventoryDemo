@@ -17,6 +17,9 @@ namespace InventoryDemo.Services.Suppliers
             _productRepository = productRepository;
         }
 
+        public Task<SupplierDto> GetSupplier(int supplierId, CancellationToken cancellationToken = default) =>
+            _productRepository.GetSupplier(supplierId, cancellationToken);
+
         public Task<IEnumerable<SupplierTableDto>> GetSuppliers(int skip, int take, CancellationToken cancellationToken = default) =>
             _productRepository.GetSuppliers(skip, take, cancellationToken);
 
