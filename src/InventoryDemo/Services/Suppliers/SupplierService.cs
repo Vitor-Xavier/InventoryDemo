@@ -2,7 +2,6 @@
 using InventoryDemo.Models;
 using InventoryDemo.Repositories.Suppliers;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,8 +19,8 @@ namespace InventoryDemo.Services.Suppliers
         public Task<SupplierDto> GetSupplier(int supplierId, CancellationToken cancellationToken = default) =>
             _productRepository.GetSupplier(supplierId, cancellationToken);
 
-        public Task<IEnumerable<SupplierTableDto>> GetSuppliers(int skip, int take, CancellationToken cancellationToken = default) =>
-            _productRepository.GetSuppliers(skip, take, cancellationToken);
+        public async Task<TableDto<SupplierTableDto>> GetSuppliers(int skip, int take, CancellationToken cancellationToken = default) =>
+            new TableDto<SupplierTableDto>(await _productRepository.GetSuppliers(skip, take, cancellationToken), await _productRepository.GetTotalSuppliers(cancellationToken));
 
         public async Task CreateSupplier(Supplier supplier, CancellationToken cancellationToken = default)
         {

@@ -10,6 +10,8 @@ namespace InventoryDemo.Repositories.Suppliers
     {
         Task<SupplierDto> GetSupplier(int supplierId, CancellationToken cancellationToken = default);
 
+        Task<int> GetTotalSuppliers(CancellationToken cancellationToken = default);
+
         Task<IEnumerable<SupplierTableDto>> GetSuppliers(int skip, int take, CancellationToken cancellationToken = default);
     }
 }
