@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InventoryDemo.Models
 {
-    public class OrderProduct : BaseEntity
+    public class OrderProduct : BaseEntity, ICloneable
     {
         public int OrderId { get; set; }
 
@@ -15,6 +15,8 @@ namespace InventoryDemo.Models
         public Order Order { get; set; }
 
         public Product Product { get; set; }
+
+        public object Clone() => (OrderProduct)MemberwiseClone();
 
         public override bool Equals(object obj) => obj is OrderProduct orderProduct && orderProduct.OrderId == OrderId && orderProduct.ProductId == ProductId;
 

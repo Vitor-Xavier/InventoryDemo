@@ -8,6 +8,8 @@ using InventoryDemo.Repositories.Orders;
 using InventoryDemo.Repositories.Products;
 using InventoryDemo.Repositories.Suppliers;
 using InventoryDemo.Repositories.Users;
+using InventoryDemo.Services.Contexts;
+using InventoryDemo.Services.Factories;
 using InventoryDemo.Services.OrderExportCancellationHashs;
 using InventoryDemo.Services.OrderExports;
 using InventoryDemo.Services.Orders;
@@ -57,6 +59,16 @@ namespace InventoryDemo.Extensions
             {
                 c.ConcurrentTasks = Environment.ProcessorCount;
             });
+        }
+
+        public static void ConfigureContexts(this IServiceCollection services)
+        {
+            services.AddScoped<IOrderFormatContext, OrderFormatContext>();
+        }
+
+        public static void ConfigureFactories(this IServiceCollection services)
+        {
+            services.AddScoped<IOrderFormatFactory, OrderFormatFactory>();
         }
 
         public static IServiceCollection AddCronJob<T>(this IServiceCollection services, Action<IScheduleConfig<T>> options) where T : CronJobService

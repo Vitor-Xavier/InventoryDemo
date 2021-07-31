@@ -26,7 +26,7 @@ namespace InventoryDemo.Consumers
             {
                 await orderExportService.UpdateOrderExport(context.Message.OrderExportId, orderExport, cancellationToken);
 
-                string url = await orderExportService.ExportOrders(cancellationToken);
+                string url = await orderExportService.ExportOrders(context.Message.DataFormat, cancellationToken);
 
                 orderExport.ProcessingEnded = DateTime.Now;
                 orderExport.ExportStatus = OrderExportStatus.Processed;

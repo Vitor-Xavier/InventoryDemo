@@ -1,4 +1,5 @@
-﻿using InventoryDemo.Services.OrderExports;
+﻿using InventoryDemo.Crosscutting;
+using InventoryDemo.Services.OrderExports;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,12 +30,13 @@ namespace InventoryDemo.Controllers
         /// <summary>
         /// Requere exportação Pedido.
         /// </summary>
+        /// <param name="dataFormat">Formato da exportação</param>
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Dados do Produto</returns>
-        [HttpPost]
-        public async Task<IActionResult> InsertOrderExport(CancellationToken cancellationToken = default)
+        [HttpPost("{dataFormat}")]
+        public async Task<IActionResult> InsertOrderExport(DataFormat dataFormat, CancellationToken cancellationToken = default)
         {
-            var orderExport = await _orderExportService.CreateOrderExport(cancellationToken);
+            var orderExport = await _orderExportService.CreateOrderExport(dataFormat, cancellationToken);
             return Created(nameof(OrderExportController), orderExport);
         }
 

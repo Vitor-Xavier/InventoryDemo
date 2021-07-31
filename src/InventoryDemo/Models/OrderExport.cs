@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InventoryDemo.Crosscutting;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace InventoryDemo.Models
@@ -9,6 +10,8 @@ namespace InventoryDemo.Models
 
         [StringLength(300)]
         public string Url { get; set; }
+
+        public DataFormat DataFormat { get; set; }
 
         public DateTime? ProcessingStarted { get; set; }
 

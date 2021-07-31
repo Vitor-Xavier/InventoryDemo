@@ -50,6 +50,8 @@ namespace InventoryDemo
             services.ConfigureBackgroundServices();
             services.ConfigureServices();
             services.ConfigureRepositories();
+            services.ConfigureFactories();
+            services.ConfigureContexts();
             services.ConfigureSwagger();
             services.ConfigureAuthentication(Configuration);
 
