@@ -2,7 +2,6 @@
 using InventoryDemo.Models;
 using InventoryDemo.Repositories.Products;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,8 +19,15 @@ namespace InventoryDemo.Services.Products
         public Task<ProductDto> GetProduct(int productId, CancellationToken cancellationToken = default) =>
             _productRepository.GetProduct(productId, cancellationToken);
 
-        public Task<IEnumerable<ProductTableDto>> GetProducts(int skip, int take, CancellationToken cancellationToken = default) =>
-            _productRepository.GetProducts(skip, take, cancellationToken);
+        public async Task<TableDto<ProductTableDto>> GetProducts(int skip, int take, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var products = await _productRepository.GetProducts(skip, take, cancellationToken);
+            var total = await _productRepository.GetTotalProducts(cancellationToken);
+
+            return new TableDto<ProductTableDto>(products, total);
+        }
 
         public async Task CreateProduct(Product product, CancellationToken cancellationToken = default)
         {

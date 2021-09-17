@@ -12,6 +12,8 @@ namespace InventoryDemo.Repositories.Products
 
         Task<IEnumerable<ProductTableDto>> GetProducts(int skip, int take, CancellationToken cancellationToken = default);
 
+        Task<int> GetTotalProducts(CancellationToken cancellationToken = default);
+
         Task<IEnumerable<Product>> GetByOrder(int orderId, CancellationToken cancellationToken = default);
     }
 }
