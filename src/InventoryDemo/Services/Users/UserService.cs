@@ -38,7 +38,7 @@ namespace InventoryDemo.Services.Users
         public async ValueTask<UserDto> Authenticate(string username, string password, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (await _userRepository.GetUserByUsernamePassword(username, password, cancellationToken) is UserDto user)
+            if (await _userRepository.GetUserByUsernamePassword(username, EncodingHelper.ComputeSha256Hash(password), cancellationToken) is UserDto user)
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
