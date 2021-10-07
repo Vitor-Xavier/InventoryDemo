@@ -4,7 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 
-namespace InventoryDemo.Services.OrderExportCancellationHashs
+namespace InventoryDemo.Services.CancellationHashs.OrderExports
 {
     public class OrderExportCancellationHash : IOrderExportCancellationHash
     {

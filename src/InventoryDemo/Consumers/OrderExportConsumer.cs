@@ -1,6 +1,6 @@
 ﻿using InventoryDemo.Events;
 using InventoryDemo.Models;
-using InventoryDemo.Services.OrderExportCancellationHashs;
+using InventoryDemo.Services.CancellationHashs.OrderExports;
 using InventoryDemo.Services.OrderExports;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +28,9 @@ namespace InventoryDemo.Consumers
 
                 string url = await orderExportService.ExportOrders(context.Message.DataFormat, cancellationToken);
 
+                orderExport.Url = url;
                 orderExport.ProcessingEnded = DateTime.Now;
+                orderExport.DataFormat = context.Message.DataFormat;
                 orderExport.ExportStatus = OrderExportStatus.Processed;
                 await orderExportService.UpdateOrderExport(context.Message.OrderExportId, orderExport);
             }

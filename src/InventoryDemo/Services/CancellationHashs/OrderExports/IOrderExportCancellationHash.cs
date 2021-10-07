@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 
-namespace InventoryDemo.Services.OrderExportCancellationHashs
+namespace InventoryDemo.Services.CancellationHashs.OrderExports
 {
     public interface IOrderExportCancellationHash
     {
