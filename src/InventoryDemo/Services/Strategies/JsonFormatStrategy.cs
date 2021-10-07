@@ -3,6 +3,7 @@ using InventoryDemo.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,7 +34,21 @@ namespace InventoryDemo.Services.Strategies
             cancellationToken.ThrowIfCancellationRequested();
 
             FileStream stream = new(path, FileMode.Open, FileAccess.Read);
-            return await JsonSerializer.DeserializeAsync<IEnumerable<Order>>(stream, cancellationToken: cancellationToken);
+            var orders = await JsonSerializer.DeserializeAsync<IEnumerable<OrderImportDto>>(stream, cancellationToken: cancellationToken);
+
+            return orders.Select(o => new Order
+            {
+                Note = o.Note,
+                Date = o.Date,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                Deleted = false,
+                OrderProducts = o.Products.Select(o => new OrderProduct
+                {
+                    ProductId = o.ProductId,
+                    Quantity = o.Quantity,
+                }).ToList()
+            });
         }
     }
 }

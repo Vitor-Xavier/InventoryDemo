@@ -14,6 +14,10 @@ namespace InventoryDemo.Services.Strategies
     {
         public DataFormat DataFormat => DataFormat.Csv;
 
+        private readonly string _orderHeader = "Order;Date;Note";
+
+        private readonly string _productHeader = "Product;Name;Code;Price Per Unit;Quantity;Price";
+
         public async Task<string> Export(IAsyncEnumerable<OrderExportDto> data, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -22,11 +26,10 @@ namespace InventoryDemo.Services.Strategies
 
             await foreach (var order in data)
             {
-                stringBuilder.AppendLine($"Order {order.OrderId} {order.Date:dd/MM/yyyy HH:mm:ss}");
-                stringBuilder.AppendLine(order.Note);
-                stringBuilder.AppendLine();
+                stringBuilder.AppendLine(_orderHeader);
+                stringBuilder.AppendLine($"{order.OrderId};{order.Date:dd/MM/yyyy HH:mm:ss};{order.Note}");
 
-                stringBuilder.AppendLine("Id;Name;Code;Price Per Unit;Quantity;Price");
+                stringBuilder.AppendLine(_productHeader);
                 foreach (var product in order.Products)
                     stringBuilder.AppendLine($"{product.ProductId};{product.Name};{product.Code};{product.PricePerUnit.ToString(CultureInfo.InvariantCulture)};{product.Quantity.ToString(CultureInfo.InvariantCulture)};{product.TotalPrice.ToString(CultureInfo.InvariantCulture)}");
 
@@ -46,30 +49,38 @@ namespace InventoryDemo.Services.Strategies
 
             string[] lines = await File.ReadAllLinesAsync(path, cancellationToken);
             HashSet<Order> orders = new();
-            Order order = new();
+            Order order = new()
+            {
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                Deleted = false
+            };
             foreach (string line in lines)
             {
                 string[] columns = line.Split(';');
 
-                if (columns.Length == 6)
+                if (columns.Length == 1)
                 {
+                    orders.Add((Order)order.Clone());
+                    order = new();
+                }
+                else if (columns.Length == 3)
+                {
+                    if (line == _orderHeader) continue;
+                    order.Date = DateTime.TryParseExact(columns[1], "dd/MM/yyyy HH:mm:ss", new CultureInfo("pt-BR"), DateTimeStyles.None, out DateTime dateTime) ? dateTime : DateTime.Now;
+                    order.Note = columns[2];
+                }
+                else if (columns.Length == 6)
+                {
+                    if (line == _productHeader) continue;
                     order.OrderProducts.Add(new OrderProduct
                     {
                         ProductId = int.TryParse(columns[0], out int productId) ? productId : default,
-                        Quantity = int.TryParse(columns[4], out int quantity) ? quantity : default,
+                        Quantity = decimal.TryParse(columns[4], NumberStyles.Any, CultureInfo.InvariantCulture, out decimal quantity) ? quantity : default,
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now,
+                        Deleted = false
                     });
-                }
-                else if (columns.Length == 1)
-                {
-                    if (columns[0].StartsWith("Order"))
-                    {
-                        orders.Add((Order)order.Clone());
-                        order = new();
-                    }
-                    else
-                    {
-                        order.Note = columns[0];
-                    }
                 }
             }
             return orders;
