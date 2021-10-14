@@ -8,9 +8,10 @@ using InventoryDemo.Repositories.Orders;
 using InventoryDemo.Repositories.Products;
 using InventoryDemo.Repositories.Suppliers;
 using InventoryDemo.Repositories.Users;
+using InventoryDemo.Services.CancellationHashs.OrderExports;
+using InventoryDemo.Services.CancellationHashs.OrderImports;
 using InventoryDemo.Services.Contexts;
 using InventoryDemo.Services.Factories;
-using InventoryDemo.Services.OrderExportCancellationHashs;
 using InventoryDemo.Services.OrderExports;
 using InventoryDemo.Services.Orders;
 using InventoryDemo.Services.Products;
@@ -38,8 +39,10 @@ namespace InventoryDemo.Extensions
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IOrderExportService, OrderExportService>();
+            services.AddScoped<IOrderImportService, OrderImportService>();
 
             services.AddSingleton<IOrderExportCancellationHash, OrderExportCancellationHash>();
+            services.AddSingleton<IOrderImportCancellationHash, OrderImportCancellationHash>();
         }
 
         public static void ConfigureRepositories(this IServiceCollection services)
@@ -49,6 +52,7 @@ namespace InventoryDemo.Extensions
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IOrderExportRepository, OrderExportRepository>();
+            services.AddScoped<IOrderImportRepository, OrderImportRepository>();
         }
 
         public static void ConfigureBackgroundServices(this IServiceCollection services)
@@ -143,6 +147,16 @@ namespace InventoryDemo.Extensions
                 });
                 
                 config.AddConsumer<OrderExportConsumer>(consumerConfig =>
+                {
+                    consumerConfig.UseConcurrencyLimit(3);
+
+                    consumerConfig.UseRetry(retryConfig =>
+                    {
+                        retryConfig.Interval(3, TimeSpan.FromMilliseconds(5000));
+                    });
+                });
+
+                config.AddConsumer<OrderImportConsumer>(consumerConfig =>
                 {
                     consumerConfig.UseConcurrencyLimit(3);
 

@@ -4,8 +4,7 @@ using InventoryDemo.Repositories.Orders;
 using InventoryDemo.Services.Cache;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -79,5 +78,15 @@ namespace InventoryDemo.Services.Orders
         }
 
         public bool IsValid(Order order) => order is { Date: { Year: >= 2021 } };
+
+        public async Task ImportOrders(IList<Order> orders, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (orders.Any(order => IsValid(order)))
+                throw new Exception("Importação inválida");
+
+            await _orderRepository.BulkInsert(orders, cancellationToken);
+        }
     }
 }

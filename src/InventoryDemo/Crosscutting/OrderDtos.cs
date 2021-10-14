@@ -17,4 +17,15 @@ namespace InventoryDemo.Crosscutting
 
         public IEnumerable<ProductOrderDto> Products { get; set; }
     }
+
+    public record OrderImportDto
+    {
+        public int OrderId { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public string Note { get; set; }
+
+        public IEnumerable<ProductOrderDto> Products { get; set; }
+    }
 }

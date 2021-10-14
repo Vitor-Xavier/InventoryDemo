@@ -25,6 +25,8 @@ namespace InventoryDemo.Context
 
         public DbSet<OrderExport> OrderExports { get; set; }
 
+        public DbSet<OrderImport> OrderImports { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
