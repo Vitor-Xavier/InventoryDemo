@@ -1,7 +1,10 @@
-﻿using InventoryDemo.Context;
+﻿using EFCore.BulkExtensions;
+using InventoryDemo.Context;
 using InventoryDemo.Crosscutting;
 using InventoryDemo.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -30,5 +33,35 @@ namespace InventoryDemo.Repositories.Orders
 
         public async Task<IEnumerable<OrderTableDto>> GetOrders(int skip, int take, CancellationToken cancellationToken = default) =>
             await _context.Orders.AsNoTracking().OrderBy(order => order.OrderId).Select(order => new OrderTableDto(order.OrderId, order.Date, order.Note)).Skip(skip).Take(take).ToListAsync(cancellationToken);
+
+        public async Task BulkInsert(IList<Order> orders, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var strategy = _context.Database.CreateExecutionStrategy();
+
+            await strategy.ExecuteAsync(async () =>
+            {
+                var transaction = _context.Database.BeginTransaction();
+                try
+                {
+                    var bulkConfig = new BulkConfig { IncludeGraph = true, BatchSize = 2000, BulkCopyTimeout = 240, SqlBulkCopyOptions = SqlBulkCopyOptions.TableLock };
+                    await _context.BulkInsertAsync(orders, bulkConfig, cancellationToken: cancellationToken);
+
+                    await transaction.CommitAsync(cancellationToken);
+                }
+                catch (Exception e)
+                {
+                    try
+                    {
+                        await transaction.RollbackAsync();
+                    }
+                    catch
+                    {
+                        throw e;
+                    }
+                }
+            });
+        }
     }
 }

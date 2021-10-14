@@ -15,5 +15,7 @@ namespace InventoryDemo.Repositories.Orders
         Task<OrderDto> GetOrder(int orderId, CancellationToken cancellationToken = default);
 
         Task<IEnumerable<OrderTableDto>> GetOrders(int skip, int take, CancellationToken cancellationToken = default);
+
+        Task BulkInsert(IList<Order> orders, CancellationToken cancellationToken = default);
     }
 }
