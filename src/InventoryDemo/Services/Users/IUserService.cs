@@ -11,6 +11,8 @@ namespace InventoryDemo.Services.Users
 
         Task<User> GetUserByUsername(string username, CancellationToken cancellationToken = default);
 
+        Task<TableDto<UserTableDto>> GetUsers(int skip, int take, CancellationToken cancellationToken = default);
+
         ValueTask<UserDto> Authenticate(string username, string password, CancellationToken cancellationToken = default);
 
         Task CreateUser(User user, CancellationToken cancellationToken = default);

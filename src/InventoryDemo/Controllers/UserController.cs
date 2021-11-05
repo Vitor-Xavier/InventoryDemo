@@ -18,6 +18,20 @@ namespace InventoryDemo.Controllers
             _userService = userService;
 
         /// <summary>
+        /// Busca paginada de Usuários.
+        /// </summary>
+        /// <param name="skip">Quantidade de itens a pular</param>
+        /// <param name="take">Quantidade de itens a retrair</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisição</param>
+        /// <returns>Tabela de Usuários</returns>
+        [HttpGet]
+        public async Task<IActionResult> GetUsers(int skip = 0, int take = 10, CancellationToken cancellationToken = default)
+        {
+            var suppliers = await _userService.GetUsers(skip, take, cancellationToken);
+            return Ok(suppliers);
+        }
+
+        /// <summary>
         /// Busca usuário por sua identificação.
         /// </summary>
         /// <param name="userId">Identificação do usuário</param>

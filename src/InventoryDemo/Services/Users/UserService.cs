@@ -35,6 +35,16 @@ namespace InventoryDemo.Services.Users
         public async Task<User> GetUserByUsername(string username, CancellationToken cancellationToken = default) =>
             await _userRepository.GetUserByUsername(username, cancellationToken);
 
+        public async Task<TableDto<UserTableDto>> GetUsers(int skip, int take, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var users = await _userRepository.GetUsers(skip, take, cancellationToken);
+            var total = await _userRepository.GetTotalUsers(cancellationToken);
+
+            return new TableDto<UserTableDto>(users, total);
+        }
+
         public async ValueTask<UserDto> Authenticate(string username, string password, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();

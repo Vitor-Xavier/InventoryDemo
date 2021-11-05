@@ -2,6 +2,7 @@
 using InventoryDemo.Crosscutting;
 using InventoryDemo.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,5 +21,11 @@ namespace InventoryDemo.Repositories.Users
 
         public Task<UserDto> GetUserByUsernamePassword(string username, string password, CancellationToken cancellationToken = default) =>
             _context.Users.Where(user => user.Username == username && user.Password == password && !user.Deleted).AsNoTracking().Select(user => new UserDto(user.Username, user.Password, null)).SingleOrDefaultAsync(cancellationToken);
+
+        public async Task<IEnumerable<UserTableDto>> GetUsers(int skip, int take, CancellationToken cancellationToken = default) =>
+            await _context.Users.AsNoTracking().OrderBy(user => user.Name).Select(user => new UserTableDto(user.UserId, user.Username, user.Name, user.Email)).Skip(skip).Take(take).ToListAsync(cancellationToken);
+
+        public Task<int> GetTotalUsers(CancellationToken cancellationToken = default) =>
+            _context.Users.AsNoTracking().Where(user => !user.Deleted).CountAsync(cancellationToken);
     }
 }
