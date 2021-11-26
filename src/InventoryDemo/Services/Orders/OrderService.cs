@@ -2,6 +2,7 @@
 using InventoryDemo.Models;
 using InventoryDemo.Repositories.Orders;
 using InventoryDemo.Services.Cache;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,7 @@ namespace InventoryDemo.Services.Orders
         public async Task CreateOrder(Order order, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (!IsValid(order)) throw new Exception("Registro inválido");
+            if (!IsValid(order)) throw new BadHttpRequestException("Pedido inválido");
 
             await _orderRepository.Add(order, cancellationToken);
             await _cacheService.SetCacheValue($"orders:{order.OrderId}", order);
@@ -61,7 +62,7 @@ namespace InventoryDemo.Services.Orders
         public async Task UpdateOrder(int orderId, Order order, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (!IsValid(order)) throw new Exception("Registro inválido");
+            if (!IsValid(order)) throw new BadHttpRequestException("Pedido inválido");
             order.OrderId = orderId;
 
             await _orderRepository.Edit(order, cancellationToken);
@@ -84,7 +85,7 @@ namespace InventoryDemo.Services.Orders
             cancellationToken.ThrowIfCancellationRequested();
 
             if (orders.Any(order => IsValid(order)))
-                throw new Exception("Importação inválida");
+                throw new BadHttpRequestException("Importação inválida");
 
             await _orderRepository.BulkInsert(orders, cancellationToken);
         }

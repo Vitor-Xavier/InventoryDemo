@@ -3,7 +3,6 @@ using InventoryDemo.Context;
 using InventoryDemo.Events;
 using InventoryDemo.Extensions;
 using InventoryDemo.Services.Cache;
-using InventoryDemo.Services.Orders;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,7 +27,6 @@ namespace InventoryDemo
 
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContextPool<InventoryContext>(options =>
@@ -59,12 +57,16 @@ namespace InventoryDemo
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.AddResponseCompression(options =>
             {
+                options.EnableForHttps = true;
                 options.Providers.Add<BrotliCompressionProvider>();
                 options.Providers.Add<GzipCompressionProvider>();
             });
 
             services.AddRabbitMQ();
-            services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true);
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,6 +89,7 @@ namespace InventoryDemo
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseProblemDetailsExceptionHandler();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers().RequireAuthorization();

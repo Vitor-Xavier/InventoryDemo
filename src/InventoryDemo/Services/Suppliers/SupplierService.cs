@@ -1,7 +1,7 @@
 ﻿using InventoryDemo.Crosscutting;
 using InventoryDemo.Models;
 using InventoryDemo.Repositories.Suppliers;
-using System;
+using Microsoft.AspNetCore.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,7 +25,7 @@ namespace InventoryDemo.Services.Suppliers
         public async Task CreateSupplier(Supplier supplier, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (!IsValid(supplier)) throw new Exception("Registro inválido");
+            if (!IsValid(supplier)) throw new BadHttpRequestException("Forncedor inválido");
 
             await _productRepository.Add(supplier, cancellationToken);
         }
@@ -33,7 +33,7 @@ namespace InventoryDemo.Services.Suppliers
         public async Task UpdateSupplier(int productId, Supplier supplier, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (!IsValid(supplier)) throw new Exception("Registro inválido");
+            if (!IsValid(supplier)) throw new BadHttpRequestException("Forncedor inválido");
             supplier.SupplierId = productId;
 
             await _productRepository.Edit(supplier, cancellationToken);

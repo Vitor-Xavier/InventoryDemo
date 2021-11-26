@@ -1,7 +1,7 @@
 ﻿using InventoryDemo.Crosscutting;
 using InventoryDemo.Models;
 using InventoryDemo.Repositories.Products;
-using System;
+using Microsoft.AspNetCore.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,7 +32,7 @@ namespace InventoryDemo.Services.Products
         public async Task CreateProduct(Product product, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (!IsValid(product)) throw new Exception("Registro inválido");
+            if (!IsValid(product)) throw new BadHttpRequestException("Produto inválido");
 
             await _productRepository.Add(product, cancellationToken);
         }
@@ -40,7 +40,7 @@ namespace InventoryDemo.Services.Products
         public async Task UpdateProduct(int productId, Product product, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (!IsValid(product)) throw new Exception("Registro inválido");
+            if (!IsValid(product)) throw new BadHttpRequestException("Produto inválido");
             product.ProductId = productId;
 
             await _productRepository.Edit(product, cancellationToken);

@@ -2,6 +2,7 @@
 using InventoryDemo.Helpers;
 using InventoryDemo.Models;
 using InventoryDemo.Repositories.Users;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -64,13 +65,13 @@ namespace InventoryDemo.Services.Users
                 return user with { Password = null, Token = tokenHandler.WriteToken(token) };
             }
             _logger.LogInformation($"Authentication failed for user '{username}' at {DateTime.Now}");
-            throw new Exception("Username or password is incorrect");
+            throw new BadHttpRequestException("Usuário e/ou senha incorretos");
         }
 
         public async Task CreateUser(User user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (!await IsValid(user, cancellationToken)) throw new Exception("Registro inválido");
+            if (!await IsValid(user, cancellationToken)) throw new BadHttpRequestException("Usuário inválido");
 
             user.Password = EncodingHelper.ComputeSha256Hash(user.Password);
 
@@ -80,7 +81,7 @@ namespace InventoryDemo.Services.Users
         public async Task UpdateUser(int userId, User user, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (!await IsValid(user, cancellationToken)) throw new Exception("Registro inválido");
+            if (!await IsValid(user, cancellationToken)) throw new BadHttpRequestException("Usuário inválido");
 
             user.UserId = userId;
             user.Password = EncodingHelper.ComputeSha256Hash(user.Password);
@@ -91,7 +92,7 @@ namespace InventoryDemo.Services.Users
         public async Task DeleteUser(int userId, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            Models.User user = new() { UserId = userId, Deleted = true };
+            User user = new() { UserId = userId, Deleted = true };
 
             await _userRepository.Delete(user, cancellationToken);
         }
