@@ -1,7 +1,9 @@
 ﻿using InventoryDemo.Crosscutting;
+using InventoryDemo.Events;
 using InventoryDemo.Models;
 using InventoryDemo.Repositories.Orders;
 using InventoryDemo.Services.Cache;
+using MassTransit;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -17,10 +19,13 @@ namespace InventoryDemo.Services.Orders
 
         public readonly ICacheService _cacheService;
 
-        public OrderService(IOrderRepository orderRepository, ICacheService cacheService)
+        public readonly IBus _bus;
+
+        public OrderService(IOrderRepository orderRepository, ICacheService cacheService, IBus bus)
         {
             _orderRepository = orderRepository;
             _cacheService = cacheService;
+            _bus = bus;
         }
 
         public async Task UpdateCacheOrders()
@@ -84,10 +89,11 @@ namespace InventoryDemo.Services.Orders
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (orders.Any(order => IsValid(order)))
+            if (orders.Any(order => !IsValid(order)))
                 throw new BadHttpRequestException("Importação inválida");
 
             await _orderRepository.BulkInsert(orders, cancellationToken);
+            await _bus.Publish(new OrderEvent { RequestedAt = DateTime.Now, ForceUpdate = true });
         }
     }
 }
