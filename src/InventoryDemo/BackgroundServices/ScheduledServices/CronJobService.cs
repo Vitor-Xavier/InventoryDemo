@@ -67,6 +67,10 @@ namespace InventoryDemo.BackgroundServices.ScheduledServices
             await Task.CompletedTask;
         }
 
-        public virtual void Dispose() => _timer?.Dispose();
+        public virtual void Dispose()
+        {
+            _timer?.Dispose();
+            GC.SuppressFinalize(this);
+        } 
     }
 }
