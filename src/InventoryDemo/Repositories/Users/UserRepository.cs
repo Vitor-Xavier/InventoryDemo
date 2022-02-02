@@ -19,8 +19,11 @@ namespace InventoryDemo.Repositories.Users
         public Task<bool> UsernameIsDefined(string username, CancellationToken cancellationToken = default) =>
             _context.Users.AsNoTracking().AnyAsync(user => user.Username == username, cancellationToken);
 
-        public Task<UserDto> GetUserByUsernamePassword(string username, string password, CancellationToken cancellationToken = default) =>
-            _context.Users.Where(user => user.Username == username && user.Password == password && !user.Deleted).AsNoTracking().Select(user => new UserDto(user.Username, user.Password, null)).SingleOrDefaultAsync(cancellationToken);
+        public Task<UserAuthDto> GetUserByUsernamePassword(string username, string password, CancellationToken cancellationToken = default) =>
+            _context.Users.Where(user => user.Username == username && user.Password == password && !user.Deleted).AsNoTracking().Select(user => new UserAuthDto(user.Username, user.Password, null)).SingleOrDefaultAsync(cancellationToken);
+
+        public async Task<IEnumerable<UserDto>> GetUsers(CancellationToken cancellationToken = default) =>
+            await _context.Users.AsNoTracking().OrderBy(user => user.Name).Select(user => new UserDto(user.UserId, user.Username, user.Name, user.Email)).ToListAsync(cancellationToken);
 
         public async Task<IEnumerable<UserTableDto>> GetUsers(int skip, int take, CancellationToken cancellationToken = default) =>
             await _context.Users.AsNoTracking().OrderBy(user => user.Name).Select(user => new UserTableDto(user.UserId, user.Username, user.Name, user.Email)).Skip(skip).Take(take).ToListAsync(cancellationToken);

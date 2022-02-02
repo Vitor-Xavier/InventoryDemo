@@ -46,10 +46,10 @@ namespace InventoryDemo.Services.Users
             return new TableDto<UserTableDto>(users, total);
         }
 
-        public async ValueTask<UserDto> Authenticate(string username, string password, CancellationToken cancellationToken = default)
+        public async ValueTask<UserAuthDto> Authenticate(string username, string password, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (await _userRepository.GetUserByUsernamePassword(username, EncodingHelper.ComputeSha256Hash(password), cancellationToken) is UserDto user)
+            if (await _userRepository.GetUserByUsernamePassword(username, EncodingHelper.ComputeSha256Hash(password), cancellationToken) is UserAuthDto user)
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
@@ -64,7 +64,7 @@ namespace InventoryDemo.Services.Users
 
                 return user with { Password = null, Token = tokenHandler.WriteToken(token) };
             }
-            _logger.LogInformation($"Authentication failed for user '{username}' at {DateTime.Now}");
+            _logger.LogInformation("Authentication failed for user '{username}' at {date}", username, DateTime.Now);
             throw new BadHttpRequestException("Usuário e/ou senha incorretos");
         }
 

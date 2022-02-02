@@ -12,7 +12,9 @@ namespace InventoryDemo.Repositories.Users
 
         Task<bool> UsernameIsDefined(string username, CancellationToken cancellationToken = default);
 
-        Task<UserDto> GetUserByUsernamePassword(string username, string password, CancellationToken cancellationToken = default);
+        Task<UserAuthDto> GetUserByUsernamePassword(string username, string password, CancellationToken cancellationToken = default);
+
+        Task<IEnumerable<UserDto>> GetUsers(CancellationToken cancellationToken = default);
 
         Task<IEnumerable<UserTableDto>> GetUsers(int skip, int take, CancellationToken cancellationToken = default);
 
