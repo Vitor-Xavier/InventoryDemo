@@ -49,7 +49,7 @@ namespace InventoryDemo.Controllers
         /// <returns>Usuário</returns>
         [HttpPost("Authenticate")]
         [AllowAnonymous]
-        public ValueTask<UserDto> Authenticate(AuthenticateModel authenticateModel, CancellationToken cancellationToken) =>
+        public ValueTask<UserAuthDto> Authenticate(AuthenticateModel authenticateModel, CancellationToken cancellationToken) =>
             _userService.Authenticate(authenticateModel.Username, authenticateModel.Password, cancellationToken);
 
         /// <summary>
