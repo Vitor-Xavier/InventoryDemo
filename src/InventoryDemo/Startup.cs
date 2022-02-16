@@ -2,6 +2,7 @@ using InventoryDemo.BackgroundServices.ScheduledServices;
 using InventoryDemo.Context;
 using InventoryDemo.Events;
 using InventoryDemo.Extensions;
+using InventoryDemo.Hubs;
 using InventoryDemo.Services.Cache;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
@@ -44,13 +45,16 @@ namespace InventoryDemo
                 c.CronExpression = @"*/1 * * * *";
             });
 
+            services.AddSignalR();
             services.ConfigureCors();
             services.ConfigureBackgroundServices();
             services.ConfigureServices();
             services.ConfigureRepositories();
             services.ConfigureFactories();
+            services.ConfigureProviders();
             services.ConfigureContexts();
             services.ConfigureSwagger();
+            services.AddHttpContextAccessor();
             services.ConfigureAuthentication(Configuration);
 
             services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
@@ -93,6 +97,7 @@ namespace InventoryDemo
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers().RequireAuthorization();
+                endpoints.MapHub<NotificationHub>(NotificationHub.ROUTE).RequireAuthorization();
             });
 
             var updateOrder = new Task(async () =>
