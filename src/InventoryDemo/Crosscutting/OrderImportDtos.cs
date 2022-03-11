@@ -3,5 +3,5 @@ using System;
 
 namespace InventoryDemo.Crosscutting
 {
-    public record OrderImportGetDto(int OrderImportId, OrderImportStatus Status, DateTime? StartTime, DateTime? EndTime);
+    public record OrderImportGetDto(int OrderImportId, OrderImportStatus Status, DateTime? StartTime, DateTime? EndTime, int UserId, string Username);
 }

@@ -13,6 +13,6 @@ namespace InventoryDemo.Repositories.OrderExports
         public OrderImportRepository(InventoryContext context) : base(context) { }
 
         public Task<OrderImportGetDto> GetOrderImportById(int orderImportId, CancellationToken cancellationToken = default) =>
-            _context.OrderImports.Where(e => e.OrderImportId == orderImportId).Select(e => new OrderImportGetDto(e.OrderImportId, e.ImportStatus, e.ProcessingStarted, e.ProcessingEnded)).FirstOrDefaultAsync(cancellationToken);
+            _context.OrderImports.Where(e => e.OrderImportId == orderImportId).Select(e => new OrderImportGetDto(e.OrderImportId, e.ImportStatus, e.ProcessingStarted, e.ProcessingEnded, e.UserId, e.User.Username)).FirstOrDefaultAsync(cancellationToken);
     }
 }
