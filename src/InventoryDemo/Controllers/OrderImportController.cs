@@ -39,7 +39,7 @@ namespace InventoryDemo.Controllers
         public async Task<IActionResult> InsertOrderExport(IFormFile dataFile, DataFormat dataFormat, CancellationToken cancellationToken = default)
         {
             var ordeImport = await _orderExportService.CreateOrderImport(dataFile, dataFormat, cancellationToken);
-            return Created(nameof(OrderImportController), ordeImport);
+            return Accepted(ordeImport);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace InventoryDemo.Controllers
         public IActionResult CancelOrderExport(int orderImportId)
         {
             _orderExportService.CancelOrderImport(orderImportId);
-            return NoContent();
+            return Accepted();
         }
     }
 }
