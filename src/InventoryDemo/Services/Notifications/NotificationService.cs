@@ -70,6 +70,9 @@ namespace InventoryDemo.Services.Notifications
             
             UserNotification userNotification = new() { NotificationId = notificationId, UserId = user.UserId, ReadAt = DateTime.Now };
             await _userNotificationRepository.Edit(userNotification, cancellationToken);
+
+            var count = await GetUnreadNotificationCount(cancellationToken);
+            await _hubContext.Clients.Users(username).SendAsync("UpdateCount", count, cancellationToken: cancellationToken);
         }
 
         public async Task ReadAllNotifications(CancellationToken cancellationToken = default)
@@ -80,6 +83,8 @@ namespace InventoryDemo.Services.Notifications
             var user = await _userRepository.GetUserByUsername(username, cancellationToken);
 
             await _userNotificationRepository.BatchReadByUser(user.UserId, cancellationToken);
+
+            await _hubContext.Clients.Users(username).SendAsync("UpdateCount", 0, cancellationToken: cancellationToken);
         }
 
         public Task SendNotification(NotificationDto notification, CancellationToken cancellationToken = default) =>
@@ -103,7 +108,7 @@ namespace InventoryDemo.Services.Notifications
             };
             await _notificationRepository.Add(notification, cancellationToken);
 
-            _hubContext.Clients.All?.SendAsync("ReceiveMessage", "all", notification.NotificationId, title, content, type, route, cancellationToken: cancellationToken);
+            await _hubContext.Clients.All?.SendAsync("ReceiveMessage", notification.NotificationId, "all", title, content, type, route, cancellationToken: cancellationToken);
         }
 
         public Task SendPrivateNotification(PrivateNotificationDto notification, CancellationToken cancellationToken = default) =>
