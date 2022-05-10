@@ -27,6 +27,10 @@ namespace InventoryDemo.Context
 
         public DbSet<OrderImport> OrderImports { get; set; }
 
+        public DbSet<Notification> Notifications { get; set; }
+
+        public DbSet<UserNotification> UserNotifications { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -36,6 +40,7 @@ namespace InventoryDemo.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<OrderProduct>().HasKey(o => new { o.OrderId, o.ProductId });
+            modelBuilder.Entity<UserNotification>().HasKey(u => new { u.UserId, u.NotificationId });
         }
 
         public override int SaveChanges()

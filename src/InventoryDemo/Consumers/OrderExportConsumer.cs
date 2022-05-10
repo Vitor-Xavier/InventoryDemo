@@ -1,6 +1,7 @@
 ﻿using InventoryDemo.Events;
 using InventoryDemo.Models;
 using InventoryDemo.Services.CancellationHashs.OrderExports;
+using InventoryDemo.Services.Notifications;
 using InventoryDemo.Services.OrderExports;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +22,7 @@ namespace InventoryDemo.Consumers
             var cancellationToken = orderExportCancellationHash.GetOrCreateCancellationToken(context.Message.OrderExportId);
 
             var orderExportService = _serviceProvider.GetService<IOrderExportService>();
-            var orderExport = new OrderExport { ExportStatus = OrderExportStatus.Processing, ProcessingStarted = DateTime.Now };
+            var orderExport = new OrderExport { ExportStatus = OrderExportStatus.Processing, UserId = context.Message.UserId, ProcessingStarted = DateTime.Now };
             try
             {
                 await orderExportService.UpdateOrderExport(context.Message.OrderExportId, orderExport, cancellationToken);
@@ -33,21 +34,33 @@ namespace InventoryDemo.Consumers
                 orderExport.DataFormat = context.Message.DataFormat;
                 orderExport.ExportStatus = OrderExportStatus.Processed;
                 await orderExportService.UpdateOrderExport(context.Message.OrderExportId, orderExport);
+
+                var notificationService = _serviceProvider.GetService<INotificationService>();
+                await notificationService.SendPrivateNotification(context.Message.Username, "Exportação de pedidos", "Exportação de pedidos finalizada", NotificationType.Success, "", cancellationToken);
             }
             catch (TaskCanceledException)
             {
                 orderExport.ExportStatus = OrderExportStatus.Cancelled;
                 await orderExportService.UpdateOrderExport(context.Message.OrderExportId, orderExport);
+
+                var notificationService = _serviceProvider.GetService<INotificationService>();
+                await notificationService.SendPrivateNotification(context.Message.Username, "Exportação de pedidos", "Exportação de pedidos cancelada", NotificationType.Information, "", cancellationToken);
             }
             catch (OperationCanceledException)
             {
                 orderExport.ExportStatus = OrderExportStatus.Cancelled;
                 await orderExportService.UpdateOrderExport(context.Message.OrderExportId, orderExport);
+
+                var notificationService = _serviceProvider.GetService<INotificationService>();
+                await notificationService.SendPrivateNotification(context.Message.Username, "Exportação de pedidos", "Exportação de pedidos cancelada", NotificationType.Information, "", cancellationToken);
             }
             catch (Exception)
             {
                 orderExport.ExportStatus = OrderExportStatus.Error;
                 await orderExportService.UpdateOrderExport(context.Message.OrderExportId, orderExport);
+
+                var notificationService = _serviceProvider.GetService<INotificationService>();
+                await notificationService.SendPrivateNotification(context.Message.Username, "Exportação de pedidos", "Erro na exportação de pedidos", NotificationType.Error, "", cancellationToken);
             }
         }
     }

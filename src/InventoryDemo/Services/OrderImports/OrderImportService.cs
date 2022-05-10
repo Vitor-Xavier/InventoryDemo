@@ -3,6 +3,7 @@ using InventoryDemo.Events;
 using InventoryDemo.Models;
 using InventoryDemo.Repositories.OrderExports;
 using InventoryDemo.Repositories.Orders;
+using InventoryDemo.Repositories.Users;
 using InventoryDemo.Services.CancellationHashs.OrderImports;
 using InventoryDemo.Services.Contexts;
 using MassTransit;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.IO;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,23 +19,31 @@ namespace InventoryDemo.Services.OrderExports
 {
     public class OrderImportService : IOrderImportService
     {
-        public readonly IOrderFormatContext _orderFormatContext;
+        private readonly IOrderFormatContext _orderFormatContext;
 
-        public readonly IOrderImportRepository _orderImportRepository;
+        private readonly IOrderImportRepository _orderImportRepository;
 
-        public readonly IOrderImportCancellationHash _orderImportCancellationHash;
+        private readonly IOrderImportCancellationHash _orderImportCancellationHash;
 
-        public readonly IOrderRepository _orderRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public readonly IBus _bus;
+        private readonly IUserRepository _userRepository;
+
+        private readonly IHttpContextAccessor _accessor;
+
+        private readonly IBus _bus;
 
         public OrderImportService(IOrderFormatContext orderFormatContext,
                                   IOrderImportRepository orderImportRepository,
                                   IOrderRepository orderRepository,
+                                  IUserRepository userRepository,
+                                  IHttpContextAccessor accessor,
                                   IBus bus,
                                   IOrderImportCancellationHash orderImportCancellationHash)
         {
             _bus = bus;
+            _accessor = accessor;
+            _userRepository = userRepository;
             _orderRepository = orderRepository;
             _orderFormatContext = orderFormatContext;
             _orderImportRepository = orderImportRepository;
@@ -52,10 +62,13 @@ namespace InventoryDemo.Services.OrderExports
             await dataFile.CopyToAsync(fileStream, cancellationToken);
             await fileStream.FlushAsync(cancellationToken);
 
-            var orderImport = new OrderImport { DataFormat = dataFormat, ImportStatus = OrderImportStatus.Waiting };
+            string username = _accessor?.HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value;
+            var user = await _userRepository.GetUserByUsername(username, cancellationToken);
+
+            var orderImport = new OrderImport { DataFormat = dataFormat, UserId = user.UserId, ImportStatus = OrderImportStatus.Waiting };
             await _orderImportRepository.Add(orderImport, cancellationToken);
 
-            await _bus.Publish(new OrderImportEvent { OrderImportId = orderImport.OrderImportId, Path = path, DataFormat = dataFormat }, cancellationToken);
+            await _bus.Publish(new OrderImportEvent { OrderImportId = orderImport.OrderImportId, UserId = user.UserId, Username = username, Path = path, DataFormat = dataFormat }, cancellationToken);
 
             return orderImport;
         }
@@ -76,7 +89,7 @@ namespace InventoryDemo.Services.OrderExports
             cancellationToken.ThrowIfCancellationRequested();
 
             var orders = await _orderFormatContext.Import(path, dataFormat, cancellationToken);
-            await _orderRepository.BulkInsert(orders.ToList());
+            await _orderRepository.BulkInsert(orders.ToList(), CancellationToken.None);
         }
     }
 }

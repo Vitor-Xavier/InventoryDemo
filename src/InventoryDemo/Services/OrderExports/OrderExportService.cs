@@ -3,9 +3,12 @@ using InventoryDemo.Events;
 using InventoryDemo.Models;
 using InventoryDemo.Repositories.OrderExports;
 using InventoryDemo.Repositories.Orders;
+using InventoryDemo.Repositories.Users;
 using InventoryDemo.Services.CancellationHashs.OrderExports;
 using InventoryDemo.Services.Contexts;
 using MassTransit;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,17 +22,25 @@ namespace InventoryDemo.Services.OrderExports
 
         public readonly IOrderExportRepository _orderExportRepository;
 
+        private readonly IUserRepository _userRepository;
+
+        private readonly IHttpContextAccessor _accessor;
+
         public readonly IOrderExportCancellationHash _orderExportCancellationHash;
 
         public readonly IBus _bus;
 
         public OrderExportService(IOrderRepository orderRepository, 
+                                  IUserRepository userRepository,
                                   IOrderFormatContext orderFormatContext,
                                   IOrderExportRepository orderExportRepository, 
-                                  IBus bus, 
+                                  IBus bus,
+                                  IHttpContextAccessor accessor,
                                   IOrderExportCancellationHash orderExportCancellationHash)
         {
             _bus = bus;
+            _accessor = accessor;
+            _userRepository = userRepository;
             _orderRepository = orderRepository;
             _orderFormatContext = orderFormatContext;
             _orderExportRepository = orderExportRepository;
@@ -43,10 +54,13 @@ namespace InventoryDemo.Services.OrderExports
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var orderExport = new OrderExport { DataFormat = dataFormat, ExportStatus = OrderExportStatus.Waiting };
+            string username = _accessor?.HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value;
+            var user = await _userRepository.GetUserByUsername(username, cancellationToken);
+
+            var orderExport = new OrderExport { DataFormat = dataFormat, UserId = user.UserId, ExportStatus = OrderExportStatus.Waiting };
             await _orderExportRepository.Add(orderExport, cancellationToken);
 
-            await _bus.Publish(new OrderExportEvent { OrderExportId = orderExport.OrderExportId, DataFormat = dataFormat }, cancellationToken);
+            await _bus.Publish(new OrderExportEvent { OrderExportId = orderExport.OrderExportId, UserId = user.UserId, Username = username, DataFormat = dataFormat }, cancellationToken);
 
             return orderExport;
         }

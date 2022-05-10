@@ -3,15 +3,20 @@ using InventoryDemo.BackgroundServices.QueuedServices;
 using InventoryDemo.BackgroundServices.ScheduledServices;
 using InventoryDemo.Consumers;
 using InventoryDemo.Crosscutting;
+using InventoryDemo.Hubs;
+using InventoryDemo.Providers;
+using InventoryDemo.Repositories.Notifications;
 using InventoryDemo.Repositories.OrderExports;
 using InventoryDemo.Repositories.Orders;
 using InventoryDemo.Repositories.Products;
 using InventoryDemo.Repositories.Suppliers;
 using InventoryDemo.Repositories.Users;
+using InventoryDemo.Repositories.UsersNotifications;
 using InventoryDemo.Services.CancellationHashs.OrderExports;
 using InventoryDemo.Services.CancellationHashs.OrderImports;
 using InventoryDemo.Services.Contexts;
 using InventoryDemo.Services.Factories;
+using InventoryDemo.Services.Notifications;
 using InventoryDemo.Services.OrderExports;
 using InventoryDemo.Services.Orders;
 using InventoryDemo.Services.Products;
@@ -19,6 +24,7 @@ using InventoryDemo.Services.Suppliers;
 using InventoryDemo.Services.Users;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -27,6 +33,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace InventoryDemo.Extensions
 {
@@ -40,6 +47,7 @@ namespace InventoryDemo.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IOrderExportService, OrderExportService>();
             services.AddScoped<IOrderImportService, OrderImportService>();
+            services.AddScoped<INotificationService, NotificationService>();
 
             services.AddSingleton<IOrderExportCancellationHash, OrderExportCancellationHash>();
             services.AddSingleton<IOrderImportCancellationHash, OrderImportCancellationHash>();
@@ -53,6 +61,8 @@ namespace InventoryDemo.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IOrderExportRepository, OrderExportRepository>();
             services.AddScoped<IOrderImportRepository, OrderImportRepository>();
+            services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
         }
 
         public static void ConfigureBackgroundServices(this IServiceCollection services)
@@ -63,6 +73,11 @@ namespace InventoryDemo.Extensions
             {
                 c.ConcurrentTasks = Environment.ProcessorCount;
             });
+        }
+
+        public static void ConfigureProviders(this IServiceCollection services)
+        {
+            services.AddSingleton<IUserIdProvider, UsernameBasedUserIdProvider>();
         }
 
         public static void ConfigureContexts(this IServiceCollection services)
@@ -128,6 +143,19 @@ namespace InventoryDemo.Extensions
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false,
+                };
+                x.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments(NotificationHub.ROUTE))
+                            context.Token = accessToken;
+
+                        return Task.CompletedTask;
+                    }
                 };
             });
         }

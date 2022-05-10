@@ -1,6 +1,7 @@
 ﻿using InventoryDemo.Events;
 using InventoryDemo.Models;
 using InventoryDemo.Services.CancellationHashs.OrderImports;
+using InventoryDemo.Services.Notifications;
 using InventoryDemo.Services.OrderExports;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +22,7 @@ namespace InventoryDemo.Consumers
             var cancellationToken = orderExportCancellationHash.GetOrCreateCancellationToken(context.Message.OrderImportId);
 
             var orderImportService = _serviceProvider.GetService<IOrderImportService>();
-            var orderImport = new OrderImport { ImportStatus = OrderImportStatus.Processing, ProcessingStarted = DateTime.Now };
+            var orderImport = new OrderImport { ImportStatus = OrderImportStatus.Processing, UserId = context.Message.UserId, ProcessingStarted = DateTime.Now };
             try
             {
                 await orderImportService.UpdateOrderImport(context.Message.OrderImportId, orderImport, cancellationToken);
@@ -32,21 +33,33 @@ namespace InventoryDemo.Consumers
                 orderImport.DataFormat = context.Message.DataFormat;
                 orderImport.ImportStatus = OrderImportStatus.Processed;
                 await orderImportService.UpdateOrderImport(context.Message.OrderImportId, orderImport);
+
+                var notificationService = _serviceProvider.GetService<INotificationService>();
+                await notificationService.SendPrivateNotification(context.Message.Username, "Importação de pedidos", "Importação de pedidos finalizada", NotificationType.Success, "", cancellationToken);
             }
             catch (TaskCanceledException)
             {
                 orderImport.ImportStatus = OrderImportStatus.Cancelled;
                 await orderImportService.UpdateOrderImport(context.Message.OrderImportId, orderImport);
+
+                var notificationService = _serviceProvider.GetService<INotificationService>();
+                await notificationService.SendPrivateNotification(context.Message.Username, "Importação de pedidos", "Importação de pedidos finalizada", NotificationType.Information, "", cancellationToken);
             }
             catch (OperationCanceledException)
             {
                 orderImport.ImportStatus = OrderImportStatus.Cancelled;
                 await orderImportService.UpdateOrderImport(context.Message.OrderImportId, orderImport);
+
+                var notificationService = _serviceProvider.GetService<INotificationService>();
+                await notificationService.SendPrivateNotification(context.Message.Username, "Importação de pedidos", "Importação de pedidos finalizada", NotificationType.Information, "", cancellationToken);
             }
             catch (Exception)
             {
                 orderImport.ImportStatus = OrderImportStatus.Error;
                 await orderImportService.UpdateOrderImport(context.Message.OrderImportId, orderImport);
+
+                var notificationService = _serviceProvider.GetService<INotificationService>();
+                await notificationService.SendPrivateNotification(context.Message.Username, "Importação de pedidos", "Importação de pedidos finalizada", NotificationType.Error, "", cancellationToken);
             }
         }
     }

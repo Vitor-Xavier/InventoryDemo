@@ -15,6 +15,10 @@ namespace InventoryDemo.Models
 
         public OrderImportStatus ImportStatus { get; set; }
 
+        public int UserId { get; set; }
+
+        public virtual User User { get; set; }
+
         public override bool Equals(object obj) => obj is OrderImport order && order.OrderImportId == OrderImportId;
 
         public override int GetHashCode() => HashCode.Combine(OrderImportId);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace InventoryDemo.Models
@@ -20,6 +21,8 @@ namespace InventoryDemo.Models
         public string Email { get; set; }
 
         public string ProfileImage { get; set; }
+
+        public virtual ICollection<UserNotification> UserNotifications { get; set; }
 
         public override bool Equals(object obj) => obj is User user && user.UserId == UserId;
 
