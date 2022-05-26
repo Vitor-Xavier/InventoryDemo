@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Ben.Demystifier" Version="0.4.1" />
     <PackageReference Include="Cronos" Version="0.7.1" />
-    <PackageReference Include="EFCore.BulkExtensions" Version="5.4.0" />
+    <PackageReference Include="EFCore.BulkExtensions" Version="6.2.8" />
     <PackageReference Include="MassTransit.AspNetCore" Version="7.2.4" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="7.2.4" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
