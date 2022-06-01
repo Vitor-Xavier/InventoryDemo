@@ -55,6 +55,6 @@ namespace InventoryDemo.Services.Products
         }
 
         public bool IsValid(Product product) => 
-            product is { Name: { Length: > 0 }, Description: { Length: > 0 }, Code: { Length: > 0 }, PricePerUnit: > 0.0m, MinimumRequired: >= 0.0m };
+            product is { Name.Length: > 0, Description.Length: > 0, Code.Length: > 0, PricePerUnit: > 0.0m, MinimumRequired: >= 0.0m };
     }
 }

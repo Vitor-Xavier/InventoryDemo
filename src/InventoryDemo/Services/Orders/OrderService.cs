@@ -83,7 +83,7 @@ namespace InventoryDemo.Services.Orders
             await _cacheService.DeleteCacheValue($"orders:{orderId}");
         }
 
-        public bool IsValid(Order order) => order is { Date: { Year: >= 2021 } };
+        public bool IsValid(Order order) => order is { Date.Year: >= 2021 };
 
         public async Task ImportOrders(IList<Order> orders, CancellationToken cancellationToken = default)
         {
@@ -93,7 +93,7 @@ namespace InventoryDemo.Services.Orders
                 throw new BadHttpRequestException("Importação inválida");
 
             await _orderRepository.BulkInsert(orders, cancellationToken);
-            await _bus.Publish(new OrderEvent { RequestedAt = DateTime.Now, ForceUpdate = true });
+            await _bus.Publish(new OrderEvent { RequestedAt = DateTime.Now, ForceUpdate = true }, CancellationToken.None);
         }
     }
 }

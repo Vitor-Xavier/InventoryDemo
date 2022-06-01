@@ -64,7 +64,7 @@ namespace InventoryDemo.Services.Users
 
                 return user with { Password = null, Token = tokenHandler.WriteToken(token) };
             }
-            _logger.LogInformation("Authentication failed for user '{username}' at {date}", username, DateTime.Now);
+            _logger.LogInformation("Falha na autenticação para {username} em {date}", username, DateTime.Now);
             throw new BadHttpRequestException("Usuário e/ou senha incorretos");
         }
 
@@ -98,7 +98,7 @@ namespace InventoryDemo.Services.Users
         }
 
         public async Task<bool> IsValid(User user, CancellationToken cancellationToken = default) =>
-            user is { Username: { Length: > 0 }, Password: { Length: > 0 }, Email: { Length: > 0 }, Name: { Length: > 0 } } &&
+            user is { Username.Length: > 0, Password.Length: > 0, Email.Length: > 0, Name.Length: > 0 } &&
             (user.UserId is not 0 || !await _userRepository.UsernameIsDefined(user.Username, cancellationToken));
     }
 }

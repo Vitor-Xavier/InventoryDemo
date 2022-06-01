@@ -47,6 +47,6 @@ namespace InventoryDemo.Services.Suppliers
             await _productRepository.Delete(supplier, cancellationToken);
         }
 
-        public bool IsValid(Supplier supplier) => supplier is { Name: { Length: > 0 } };
+        public bool IsValid(Supplier supplier) => supplier is { Name.Length: > 0 };
     }
 }
