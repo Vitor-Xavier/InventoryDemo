@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace InventoryDemo.Models
 {
@@ -17,6 +18,7 @@ namespace InventoryDemo.Models
 
         public string Route { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<UserNotification> UsersNotification { get; set; }
 
         public override bool Equals(object obj) => obj is Notification notification && notification.NotificationId == NotificationId;

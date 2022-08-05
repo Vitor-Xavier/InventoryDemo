@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace InventoryDemo.Models
 {
@@ -22,6 +23,7 @@ namespace InventoryDemo.Models
 
         public string ProfileImage { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<UserNotification> UserNotifications { get; set; }
 
         public override bool Equals(object obj) => obj is User user && user.UserId == UserId;

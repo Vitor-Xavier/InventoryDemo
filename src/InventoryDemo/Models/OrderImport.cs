@@ -1,5 +1,6 @@
 ﻿using InventoryDemo.Crosscutting;
 using System;
+using System.Text.Json.Serialization;
 
 namespace InventoryDemo.Models
 {
@@ -17,6 +18,7 @@ namespace InventoryDemo.Models
 
         public int UserId { get; set; }
 
+        [JsonIgnore]
         public virtual User User { get; set; }
 
         public override bool Equals(object obj) => obj is OrderImport order && order.OrderImportId == OrderImportId;

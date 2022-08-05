@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace InventoryDemo.Models
 {
@@ -12,8 +13,10 @@ namespace InventoryDemo.Models
         [Column(TypeName = "decimal(5, 2)")]
         public decimal Quantity { get; set; }
 
+        [JsonIgnore]
         public Order Order { get; set; }
 
+        [JsonIgnore]
         public Product Product { get; set; }
 
         public object Clone() => (OrderProduct)MemberwiseClone();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace InventoryDemo.Models
 {
@@ -11,6 +12,7 @@ namespace InventoryDemo.Models
 
         public string Note { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new HashSet<OrderProduct>();
 
         public object Clone() => MemberwiseClone();

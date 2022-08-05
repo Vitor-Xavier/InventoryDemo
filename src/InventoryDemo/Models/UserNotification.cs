@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace InventoryDemo.Models
 {
@@ -10,8 +11,10 @@ namespace InventoryDemo.Models
 
         public DateTime? ReadAt { get; set; }
 
+        [JsonIgnore]
         public virtual User User { get; set; }
 
+        [JsonIgnore]
         public virtual Notification Notification { get; set; }
 
         public override bool Equals(object obj) => obj is UserNotification userNotification && userNotification.NotificationId == NotificationId && userNotification.UserId == UserId;
