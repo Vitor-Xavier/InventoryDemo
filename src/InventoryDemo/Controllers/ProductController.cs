@@ -1,4 +1,6 @@
-﻿using InventoryDemo.Models;
+﻿using InventoryDemo.Conventions;
+using InventoryDemo.Crosscutting;
+using InventoryDemo.Models;
 using InventoryDemo.Services.Products;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
@@ -8,6 +10,8 @@ namespace InventoryDemo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Produces("application/json")]
+    [ApiConventionType(typeof(InventoryApiConventions))]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -22,7 +26,7 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Tabela de Produtos</returns>
         [HttpGet]
-        public async Task<IActionResult> GetProducts(int skip = 0, int take = 10, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<TableDto<ProductTableDto>>> GetProducts(int skip = 0, int take = 10, CancellationToken cancellationToken = default)
         {
             var suppliers = await _productService.GetProducts(skip, take, cancellationToken);
             return Ok(suppliers);
@@ -35,7 +39,7 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Produto</returns>
         [HttpGet("{productId:int}")]
-        public async Task<IActionResult> GetProduct(int productId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<ProductDto>> GetProduct(int productId, CancellationToken cancellationToken = default)
         {
             var suppliers = await _productService.GetProduct(productId, cancellationToken);
             return Ok(suppliers);
@@ -48,10 +52,10 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Dados do Produto</returns>
         [HttpPost]
-        public async Task<IActionResult> InsertProduct(Product product, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<Product>> CreateProduct(Product product, CancellationToken cancellationToken = default)
         {
             await _productService.CreateProduct(product, cancellationToken);
-            return Created(nameof(ProductController), product);
+            return CreatedAtAction(nameof(GetProduct), new { productId = product.ProductId }, product);
         }
 
         /// <summary>

@@ -25,7 +25,7 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Tabela de Usuários</returns>
         [HttpGet]
-        public async Task<IActionResult> GetUsers(int skip = 0, int take = 10, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<TableDto<UserTableDto>>> GetUsers(int skip = 0, int take = 10, CancellationToken cancellationToken = default)
         {
             var suppliers = await _userService.GetUsers(skip, take, cancellationToken);
             return Ok(suppliers);
@@ -38,7 +38,7 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Usuário</returns>
         [HttpGet("{userId:int}")]
-        public ValueTask<User> FindUserById(int userId, CancellationToken cancellationToken) =>
+        public ValueTask<User> GetUser(int userId, CancellationToken cancellationToken) =>
             _userService.GetUserById(userId, cancellationToken);
 
         /// <summary>
@@ -47,6 +47,14 @@ namespace InventoryDemo.Controllers
         /// <param name="authenticateModel">Credenciais do usuário</param>
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Usuário</returns>
+        /// <remarks>
+        /// Exemplo:
+        /// 
+        ///     {
+        ///         "username": "vitorxs",
+        ///         "password": "1234"
+        ///     }
+        /// </remarks>
         [HttpPost("Authenticate")]
         [AllowAnonymous]
         public ValueTask<UserAuthDto> Authenticate(AuthenticateModel authenticateModel, CancellationToken cancellationToken) =>
@@ -70,10 +78,10 @@ namespace InventoryDemo.Controllers
         /// <returns>Created user</returns>
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<User>> PostUser(User user, CancellationToken cancellationToken)
+        public async Task<ActionResult<User>> CreateUser(User user, CancellationToken cancellationToken)
         {
             await _userService.CreateUser(user, cancellationToken);
-            return Created(nameof(User), user);
+            return CreatedAtAction(nameof(GetUser), new { userId = user.UserId }, user);
         }
 
         /// <summary>
@@ -84,10 +92,10 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Updated user</returns>
         [HttpPut("{userId:int}")]
-        public async Task<ActionResult<User>> PutUser(int userId, User user, CancellationToken cancellationToken)
+        public async Task<ActionResult<User>> UpdateUser(int userId, User user, CancellationToken cancellationToken)
         {
             await _userService.UpdateUser(userId, user, cancellationToken);
-            return Ok(user);
+            return NoContent();
         }
 
         /// <summary>

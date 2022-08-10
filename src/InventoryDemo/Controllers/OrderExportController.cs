@@ -1,4 +1,5 @@
 ﻿using InventoryDemo.Crosscutting;
+using InventoryDemo.Models;
 using InventoryDemo.Services.OrderExports;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
@@ -19,9 +20,9 @@ namespace InventoryDemo.Controllers
         /// </summary>
         /// <param name="orderExportId">Identificação da exportação de Pedidos</param>
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
-        /// <returns>Dados do Produto</returns>
+        /// <returns>Dados da Exportação de Pedidos</returns>
         [HttpGet("{orderExportId:int}")]
-        public async Task<IActionResult> GetOrderExport(int orderExportId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<OrderExportGetDto>> GetOrderExport(int orderExportId, CancellationToken cancellationToken = default)
         {
             var orderExport = await _orderExportService.GetOrderExport(orderExportId, cancellationToken);
             return Ok(orderExport);
@@ -32,12 +33,12 @@ namespace InventoryDemo.Controllers
         /// </summary>
         /// <param name="dataFormat">Formato da exportação</param>
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
-        /// <returns>Dados do Produto</returns>
+        /// <returns>Dados da Exportação de Pedidos</returns>
         [HttpPost("{dataFormat}")]
-        public async Task<IActionResult> InsertOrderExport(DataFormat dataFormat, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<OrderExport>> CreateOrderExport(DataFormat dataFormat, CancellationToken cancellationToken = default)
         {
             var orderExport = await _orderExportService.CreateOrderExport(dataFormat, cancellationToken);
-            return Accepted(orderExport);
+            return AcceptedAtAction(nameof(GetOrderExport), new { orderExportId = orderExport.OrderExportId }, orderExport);
         }
 
         /// <summary>
@@ -48,7 +49,7 @@ namespace InventoryDemo.Controllers
         public IActionResult CancelOrderExport(int orderExportId)
         {
             _orderExportService.CancelOrderExport(orderExportId);
-            return Accepted();
+            return AcceptedAtAction(nameof(GetOrderExport), new { orderExportId });
         }
     }
 }

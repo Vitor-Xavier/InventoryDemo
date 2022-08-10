@@ -22,7 +22,7 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Lista de Notificações</returns>
         [HttpGet]
-        public async Task<IActionResult> GetNotifications(int skip = 0, int take = 10, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<TableDto<NotificationListDto>>> GetNotifications(int skip = 0, int take = 10, CancellationToken cancellationToken = default)
         {
             var notifications = await _notificationService.GetNotifications(skip, take, cancellationToken);
             return Ok(notifications);
@@ -34,7 +34,7 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Total de Notificações não lidas</returns>
         [HttpGet("unread/count")]
-        public async Task<IActionResult> GetUnreadNotificationCount(CancellationToken cancellationToken = default)
+        public async Task<ActionResult<int>> GetUnreadNotificationCount(CancellationToken cancellationToken = default)
         {
             var notifications = await _notificationService.GetUnreadNotificationCount(cancellationToken);
             return Ok(notifications);
@@ -46,7 +46,7 @@ namespace InventoryDemo.Controllers
         /// <param name="notificationId">Identificação da notificação</param>
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         [HttpPut("{notificationId:int}/read")]
-        public async Task<IActionResult> UpdateReadNotification(int notificationId, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateReadNotification(int notificationId, CancellationToken cancellationToken = default)
         {
             await _notificationService.ReadNotification(notificationId, cancellationToken);
             return NoContent();
@@ -57,21 +57,21 @@ namespace InventoryDemo.Controllers
         /// </summary>
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         [HttpPut("read")]
-        public async Task<IActionResult> UpdateReadNotification(CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateReadNotification(CancellationToken cancellationToken = default)
         {
             await _notificationService.ReadAllNotifications(cancellationToken);
             return NoContent();
         }
 
         [HttpPost("Send")]
-        public async Task<IActionResult> SendNotification(NotificationDto message, CancellationToken cancellationToken)
+        public async Task<IActionResult> SendNotification(NotificationDto message, CancellationToken cancellationToken = default)
         {
             await _notificationService.SendNotification(message.Title, message.Content, message.Type, message.Route, cancellationToken);
             return NoContent();
         }
 
         [HttpPost("Private/Send")]
-        public async Task<IActionResult> SendPrivateNotification(PrivateNotificationDto message, CancellationToken cancellationToken)
+        public async Task<IActionResult> SendPrivateNotification(PrivateNotificationDto message, CancellationToken cancellationToken = default)
         {
             await _notificationService.SendPrivateNotification(message.To, message.Title, message.Content, message.Type, message.Route, cancellationToken);
             return NoContent();

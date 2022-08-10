@@ -1,4 +1,5 @@
-﻿using InventoryDemo.Models;
+﻿using InventoryDemo.Crosscutting;
+using InventoryDemo.Models;
 using InventoryDemo.Services.Orders;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
@@ -22,7 +23,7 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Tabela de Pedidos</returns>
         [HttpGet]
-        public async Task<IActionResult> GetOrders(int skip = 0, int take = 10, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<TableDto<OrderTableDto>>> GetOrders(int skip = 0, int take = 10, CancellationToken cancellationToken = default)
         {
             var suppliers = await _orderService.GetOrders(skip, take, cancellationToken);
             return Ok(suppliers);
@@ -35,7 +36,7 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Pedido</returns>
         [HttpGet("{orderId:int}")]
-        public async Task<IActionResult> GetOrder(int orderId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<OrderDto>> GetOrder(int orderId, CancellationToken cancellationToken = default)
         {
             var suppliers = await _orderService.GetOrder(orderId, cancellationToken);
             return Ok(suppliers);
@@ -44,38 +45,38 @@ namespace InventoryDemo.Controllers
         /// <summary>
         /// Insere Pedido.
         /// </summary>
-        /// <param name="product">Dados do Produto</param>
+        /// <param name="order">Dados do Pedido</param>
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
-        /// <returns>Dados do Produto</returns>
+        /// <returns>Dados do Pedido</returns>
         [HttpPost]
-        public async Task<IActionResult> InsertOrder(Order product, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<Order>> InsertOrder(Order order, CancellationToken cancellationToken = default)
         {
-            await _orderService.CreateOrder(product, cancellationToken);
-            return Created(nameof(ProductController), product);
+            await _orderService.CreateOrder(order, cancellationToken);
+            return CreatedAtAction(nameof(GetOrder), new { orderId = order.OrderId }, order);
         }
 
         /// <summary>
         /// Altera dados de Pedido.
         /// </summary>
-        /// <param name="productId">Identificação do Pedido</param>
-        /// <param name="product">Dados do Pedido</param>
+        /// <param name="orderId">Identificação do Pedido</param>
+        /// <param name="order">Dados do Pedido</param>
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
-        [HttpPut("{productId:int}")]
-        public async Task<IActionResult> UpdateOrder(int productId, Order product, CancellationToken cancellationToken = default)
+        [HttpPut("{orderId:int}")]
+        public async Task<IActionResult> UpdateOrder(int orderId, Order order, CancellationToken cancellationToken = default)
         {
-            await _orderService.UpdateOrder(productId, product, cancellationToken);
+            await _orderService.UpdateOrder(orderId, order, cancellationToken);
             return NoContent();
         }
 
         /// <summary>
         /// Remove Pedido.
         /// </summary>
-        /// <param name="productId">Identificação do Pedido</param>
+        /// <param name="orderId">Identificação do Pedido</param>
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
-        [HttpDelete("{productId:int}")]
-        public async Task<IActionResult> DeleteOrder(int productId, CancellationToken cancellationToken = default)
+        [HttpDelete("{orderId:int}")]
+        public async Task<IActionResult> DeleteOrder(int orderId, CancellationToken cancellationToken = default)
         {
-            await _orderService.DeleteOrder(productId, cancellationToken);
+            await _orderService.DeleteOrder(orderId, cancellationToken);
             return NoContent();
         }
     }

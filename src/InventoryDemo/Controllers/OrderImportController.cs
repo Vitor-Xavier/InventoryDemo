@@ -1,4 +1,5 @@
 ﻿using InventoryDemo.Crosscutting;
+using InventoryDemo.Models;
 using InventoryDemo.Services.OrderExports;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Dados do Produto</returns>
         [HttpGet("{orderImportId:int}")]
-        public async Task<IActionResult> GetOrderExport(int orderImportId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<OrderImportGetDto>> GetOrderExport(int orderImportId, CancellationToken cancellationToken = default)
         {
             var ordeImport = await _orderExportService.GetOrderImport(orderImportId, cancellationToken);
             return Ok(ordeImport);
@@ -36,10 +37,10 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Dados do Produto</returns>
         [HttpPost("{dataFormat}")]
-        public async Task<IActionResult> InsertOrderExport(IFormFile dataFile, DataFormat dataFormat, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<OrderImport>> CreateOrderExport(IFormFile dataFile, DataFormat dataFormat, CancellationToken cancellationToken = default)
         {
-            var ordeImport = await _orderExportService.CreateOrderImport(dataFile, dataFormat, cancellationToken);
-            return Accepted(ordeImport);
+            var orderImport = await _orderExportService.CreateOrderImport(dataFile, dataFormat, cancellationToken);
+            return AcceptedAtAction(nameof(GetOrderExport), new { orderImportId = orderImport.OrderImportId }, orderImport);
         }
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace InventoryDemo.Controllers
         public IActionResult CancelOrderExport(int orderImportId)
         {
             _orderExportService.CancelOrderImport(orderImportId);
-            return Accepted();
+            return AcceptedAtAction(nameof(GetOrderExport), new { orderImportId });
         }
     }
 }

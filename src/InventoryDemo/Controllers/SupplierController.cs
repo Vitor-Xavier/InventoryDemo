@@ -1,4 +1,5 @@
-﻿using InventoryDemo.Models;
+﻿using InventoryDemo.Crosscutting;
+using InventoryDemo.Models;
 using InventoryDemo.Services.Suppliers;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
@@ -22,7 +23,7 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Tabela de Fornecedores</returns>
         [HttpGet]
-        public async Task<IActionResult> GetSuppliers(int skip = 0, int take = 10, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<TableDto<SupplierTableDto>>> GetSuppliers(int skip = 0, int take = 10, CancellationToken cancellationToken = default)
         {
             var suppliers = await _supplierService.GetSuppliers(skip, take, cancellationToken);
             return Ok(suppliers);
@@ -35,7 +36,7 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Fornecedor</returns>
         [HttpGet("{supplierId:int}")]
-        public async Task<IActionResult> GetSupplier(int supplierId, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<SupplierDto>> GetSupplier(int supplierId, CancellationToken cancellationToken = default)
         {
             var suppliers = await _supplierService.GetSupplier(supplierId, cancellationToken);
             return Ok(suppliers);
@@ -48,10 +49,10 @@ namespace InventoryDemo.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Dados do Fornecedor</returns>
         [HttpPost]
-        public async Task<IActionResult> InsertSupplier(Supplier supplier, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<Supplier>> CreateSupplier(Supplier supplier, CancellationToken cancellationToken = default)
         {
             await _supplierService.CreateSupplier(supplier, cancellationToken);
-            return Created(nameof(SupplierController), supplier);
+            return CreatedAtAction(nameof(GetSupplier), new { supplierId = supplier.SupplierId }, supplier);
         }
 
         /// <summary>
