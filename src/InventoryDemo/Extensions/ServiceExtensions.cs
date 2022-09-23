@@ -1,5 +1,4 @@
-﻿using GreenPipes;
-using InventoryDemo.BackgroundServices.QueuedServices;
+﻿using InventoryDemo.BackgroundServices.QueuedServices;
 using InventoryDemo.BackgroundServices.ScheduledServices;
 using InventoryDemo.Consumers;
 using InventoryDemo.Crosscutting;
@@ -205,7 +204,6 @@ namespace InventoryDemo.Extensions
                     configure.ConfigureEndpoints(context);
                 });
             });
-            services.AddMassTransitHostedService();
         }
 
         internal static void ConfigureSwagger(this IServiceCollection services) =>
