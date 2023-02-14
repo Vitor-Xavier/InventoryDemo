@@ -1,4 +1,4 @@
-using InventoryDemo.Models;
+using InventoryDemo.Domain.Models;
 using System;
 
 namespace InventoryDemo.Crosscutting

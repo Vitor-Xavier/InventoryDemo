@@ -1,4 +1,4 @@
-﻿using InventoryDemo.Events;
+﻿using InventoryDemo.Crosscutting.Events;
 using InventoryDemo.Services.Cache;
 using InventoryDemo.Services.Orders;
 using MassTransit;

@@ -1,5 +1,5 @@
 ﻿using InventoryDemo.Crosscutting;
-using InventoryDemo.Models;
+using InventoryDemo.Domain.Models;
 using InventoryDemo.Services.Orders;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;

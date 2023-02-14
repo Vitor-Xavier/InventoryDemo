@@ -1,6 +1,6 @@
 ﻿using InventoryDemo.Conventions;
 using InventoryDemo.Crosscutting;
-using InventoryDemo.Models;
+using InventoryDemo.Domain.Models;
 using InventoryDemo.Services.Products;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;

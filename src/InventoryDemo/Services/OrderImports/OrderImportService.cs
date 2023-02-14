@@ -1,9 +1,9 @@
 ﻿using InventoryDemo.Crosscutting;
-using InventoryDemo.Events;
-using InventoryDemo.Models;
-using InventoryDemo.Repositories.OrderExports;
-using InventoryDemo.Repositories.Orders;
-using InventoryDemo.Repositories.Users;
+using InventoryDemo.Domain.Models;
+using InventoryDemo.Crosscutting.Events;
+using InventoryDemo.Infrastructure.Repositories.OrderImports;
+using InventoryDemo.Infrastructure.Repositories.Orders;
+using InventoryDemo.Infrastructure.Repositories.Users;
 using InventoryDemo.Services.CancellationHashs.OrderImports;
 using InventoryDemo.Services.Contexts;
 using MassTransit;

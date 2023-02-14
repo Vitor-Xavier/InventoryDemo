@@ -1,5 +1,5 @@
-﻿using InventoryDemo.Events;
-using InventoryDemo.Models;
+﻿using InventoryDemo.Crosscutting.Events;
+using InventoryDemo.Domain.Models;
 using InventoryDemo.Services.CancellationHashs.OrderExports;
 using InventoryDemo.Services.Notifications;
 using InventoryDemo.Services.OrderExports;

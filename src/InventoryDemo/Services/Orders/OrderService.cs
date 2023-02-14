@@ -1,7 +1,7 @@
 ﻿using InventoryDemo.Crosscutting;
-using InventoryDemo.Events;
-using InventoryDemo.Models;
-using InventoryDemo.Repositories.Orders;
+using InventoryDemo.Domain.Models;
+using InventoryDemo.Crosscutting.Events;
+using InventoryDemo.Infrastructure.Repositories.Orders;
 using InventoryDemo.Services.Cache;
 using MassTransit;
 using Microsoft.AspNetCore.Http;

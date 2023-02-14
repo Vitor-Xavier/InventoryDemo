@@ -1,5 +1,5 @@
 ﻿using InventoryDemo.Crosscutting;
-using InventoryDemo.Models;
+using InventoryDemo.Domain.Models;
 using InventoryDemo.Services.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,6 +1,6 @@
 ﻿using InventoryDemo.Crosscutting;
-using InventoryDemo.Models;
-using InventoryDemo.Repositories.Suppliers;
+using InventoryDemo.Domain.Models;
+using InventoryDemo.Infrastructure.Repositories.Suppliers;
 using Microsoft.AspNetCore.Http;
 using System.Threading;
 using System.Threading.Tasks;

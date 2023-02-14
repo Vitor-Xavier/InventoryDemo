@@ -1,5 +1,5 @@
 ﻿using InventoryDemo.Crosscutting;
-using InventoryDemo.Models;
+using InventoryDemo.Domain.Models;
 using InventoryDemo.Services.OrderExports;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
