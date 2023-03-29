@@ -29,10 +29,10 @@ namespace InventoryDemo.Extensions
 						if (exception is BadHttpRequestException badHttpRequestException)
 						{
 							problemDetails.Title = "The request is invalid";
-							problemDetails.Status = StatusCodes.Status400BadRequest;
+							problemDetails.Status = badHttpRequestException.StatusCode;
 							problemDetails.Detail = badHttpRequestException.Message;
 						}
-						else
+                        else
 						{
 							problemDetails.Title = exception.Message;
 							problemDetails.Status = StatusCodes.Status500InternalServerError;
