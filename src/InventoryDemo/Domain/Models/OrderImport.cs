@@ -18,8 +18,13 @@ namespace InventoryDemo.Domain.Models
 
         public int UserId { get; set; }
 
+        public int ConfirmationId { get; set; }
+
         [JsonIgnore]
         public virtual User User { get; set; }
+
+        [JsonIgnore]
+        public virtual Confirmation Confirmation { get; set; }
 
         public override bool Equals(object obj) => obj is OrderImport order && order.OrderImportId == OrderImportId;
 
