@@ -3,17 +3,11 @@ using InventoryDemo.BackgroundServices.ScheduledServices;
 using InventoryDemo.Consumers;
 using InventoryDemo.Crosscutting;
 using InventoryDemo.Infrastructure.Hubs;
-using InventoryDemo.Infrastructure.Repositories.Notifications;
-using InventoryDemo.Infrastructure.Repositories.OrderExports;
-using InventoryDemo.Infrastructure.Repositories.OrderImports;
-using InventoryDemo.Infrastructure.Repositories.Orders;
-using InventoryDemo.Infrastructure.Repositories.Products;
-using InventoryDemo.Infrastructure.Repositories.Suppliers;
-using InventoryDemo.Infrastructure.Repositories.Users;
-using InventoryDemo.Infrastructure.Repositories.UsersNotifications;
+using InventoryDemo.Infrastructure.Persistance.Repositories.Confirmations;
 using InventoryDemo.Providers;
 using InventoryDemo.Services.CancellationHashs.OrderExports;
 using InventoryDemo.Services.CancellationHashs.OrderImports;
+using InventoryDemo.Services.Confirmations;
 using InventoryDemo.Services.Contexts;
 using InventoryDemo.Services.Factories;
 using InventoryDemo.Services.Notifications;
@@ -48,6 +42,7 @@ namespace InventoryDemo.Extensions
             services.AddScoped<IOrderExportService, OrderExportService>();
             services.AddScoped<IOrderImportService, OrderImportService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IConfirmationService, ConfirmationService>();
 
             services.AddSingleton<IOrderExportCancellationHash, OrderExportCancellationHash>();
             services.AddSingleton<IOrderImportCancellationHash, OrderImportCancellationHash>();
@@ -63,6 +58,7 @@ namespace InventoryDemo.Extensions
             services.AddScoped<IOrderImportRepository, OrderImportRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
+            services.AddScoped<IConfirmationRepository, ConfirmationRepository>();
         }
 
         public static void ConfigureBackgroundServices(this IServiceCollection services)
