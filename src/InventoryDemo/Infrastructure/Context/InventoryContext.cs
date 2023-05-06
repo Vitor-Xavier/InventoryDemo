@@ -31,6 +31,8 @@ namespace InventoryDemo.Infrastructure.Context
 
         public DbSet<UserNotification> UserNotifications { get; set; }
 
+        public DbSet<Confirmation> Confirmations { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
