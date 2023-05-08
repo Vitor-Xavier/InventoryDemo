@@ -3,6 +3,7 @@ using InventoryDemo.Domain.Models;
 using InventoryDemo.Services.OrderExports;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,12 +35,14 @@ namespace InventoryDemo.Controllers
         /// </summary>
         /// <param name="dataFile">Dados para importação</param>
         /// <param name="dataFormat">Formato da importação</param>
+        /// <param name="code">Código de Confirmação</param>
+        /// <param name="codeVerifier">Código de Verificação</param>
         /// <param name="cancellationToken">Token de cancelamento da requisição</param>
         /// <returns>Dados do Produto</returns>
         [HttpPost("{dataFormat}")]
-        public async Task<ActionResult<OrderImport>> CreateOrderExport(IFormFile dataFile, DataFormat dataFormat, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<OrderImport>> CreateOrderExport(IFormFile dataFile, DataFormat dataFormat, Guid code, string codeVerifier, CancellationToken cancellationToken = default)
         {
-            var orderImport = await _orderExportService.CreateOrderImport(dataFile, dataFormat, cancellationToken);
+            var orderImport = await _orderExportService.CreateOrderImport(dataFile, dataFormat, code, codeVerifier, cancellationToken);
             return AcceptedAtAction(nameof(GetOrderExport), new { orderImportId = orderImport.OrderImportId }, orderImport);
         }
 

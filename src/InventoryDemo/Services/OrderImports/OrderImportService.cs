@@ -1,9 +1,6 @@
 ﻿using InventoryDemo.Crosscutting;
 using InventoryDemo.Domain.Models;
 using InventoryDemo.Crosscutting.Events;
-using InventoryDemo.Infrastructure.Repositories.OrderImports;
-using InventoryDemo.Infrastructure.Repositories.Orders;
-using InventoryDemo.Infrastructure.Repositories.Users;
 using InventoryDemo.Services.CancellationHashs.OrderImports;
 using InventoryDemo.Services.Contexts;
 using MassTransit;
@@ -14,6 +11,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using InventoryDemo.Services.Confirmations;
+using InventoryDemo.Infrastructure.Persistance.Repositories.OrderImports;
+using InventoryDemo.Infrastructure.Persistance.Repositories.Orders;
+using InventoryDemo.Infrastructure.Persistance.Repositories.Users;
 
 namespace InventoryDemo.Services.OrderExports
 {
@@ -33,13 +34,16 @@ namespace InventoryDemo.Services.OrderExports
 
         private readonly IBus _bus;
 
+        private readonly IConfirmationService _confirmationService;
+
         public OrderImportService(IOrderFormatContext orderFormatContext,
                                   IOrderImportRepository orderImportRepository,
                                   IOrderRepository orderRepository,
                                   IUserRepository userRepository,
                                   IHttpContextAccessor accessor,
                                   IBus bus,
-                                  IOrderImportCancellationHash orderImportCancellationHash)
+                                  IOrderImportCancellationHash orderImportCancellationHash,
+                                  IConfirmationService confirmationService)
         {
             _bus = bus;
             _accessor = accessor;
@@ -48,12 +52,13 @@ namespace InventoryDemo.Services.OrderExports
             _orderFormatContext = orderFormatContext;
             _orderImportRepository = orderImportRepository;
             _orderImportCancellationHash = orderImportCancellationHash;
+            _confirmationService = confirmationService;
         }
 
         public Task<OrderImportGetDto> GetOrderImport(int orderImportId, CancellationToken cancellationToken = default) =>
             _orderImportRepository.GetOrderImportById(orderImportId, cancellationToken);
 
-        public async Task<OrderImport> CreateOrderImport(IFormFile dataFile, DataFormat dataFormat, CancellationToken cancellationToken = default)
+        public async Task<OrderImport> CreateOrderImport(IFormFile dataFile, DataFormat dataFormat, Guid code, string codeVerifier, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -63,7 +68,9 @@ namespace InventoryDemo.Services.OrderExports
             await fileStream.FlushAsync(cancellationToken);
 
             string username = _accessor?.HttpContext?.User?.FindFirst(ClaimTypes.Name)?.Value;
-            var user = await _userRepository.GetUserByUsername(username, cancellationToken);
+            var user = await _userRepository.GetUserByUsername(username, cancellationToken) ?? throw new BadHttpRequestException("Usuário inválido");
+
+            await _confirmationService.ValidateConfirmation(code, codeVerifier, username, cancellationToken);
 
             var orderImport = new OrderImport { DataFormat = dataFormat, UserId = user.UserId, ImportStatus = OrderImportStatus.Waiting };
             await _orderImportRepository.Add(orderImport, cancellationToken);
