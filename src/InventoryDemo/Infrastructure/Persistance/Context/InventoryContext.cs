@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace InventoryDemo.Infrastructure.Context
+namespace InventoryDemo.Infrastructure.Persistance.Context
 {
     public class InventoryContext : DbContext
     {

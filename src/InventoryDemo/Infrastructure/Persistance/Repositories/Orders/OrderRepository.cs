@@ -1,7 +1,7 @@
 ﻿using EFCore.BulkExtensions;
 using InventoryDemo.Crosscutting;
 using InventoryDemo.Domain.Models;
-using InventoryDemo.Infrastructure.Context;
+using InventoryDemo.Infrastructure.Persistance.Context;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace InventoryDemo.Infrastructure.Repositories.Orders
+namespace InventoryDemo.Infrastructure.Persistance.Repositories.Orders
 {
     public class OrderRepository : Repository<Order, InventoryContext>, IOrderRepository
     {

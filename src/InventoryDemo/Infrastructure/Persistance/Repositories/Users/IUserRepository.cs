@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace InventoryDemo.Infrastructure.Repositories.Users
+namespace InventoryDemo.Infrastructure.Persistance.Repositories.Users
 {
     public interface IUserRepository : IRepository<User>
     {

@@ -1,7 +1,6 @@
 ﻿using InventoryDemo.Crosscutting;
 using InventoryDemo.Domain.Models;
 using InventoryDemo.Crosscutting.Events;
-using InventoryDemo.Infrastructure.Repositories.Orders;
 using InventoryDemo.Services.Cache;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using InventoryDemo.Infrastructure.Persistance.Repositories.Orders;
 
 namespace InventoryDemo.Services.Orders
 {

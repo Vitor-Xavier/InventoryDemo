@@ -1,7 +1,7 @@
 ﻿using InventoryDemo.Crosscutting;
 using InventoryDemo.Domain.Models;
 using InventoryDemo.Helpers;
-using InventoryDemo.Infrastructure.Repositories.Users;
+using InventoryDemo.Infrastructure.Persistance.Repositories.Users;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

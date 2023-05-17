@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace InventoryDemo.Infrastructure.Repositories.Orders
+namespace InventoryDemo.Infrastructure.Persistance.Repositories.Orders
 {
     public interface IOrderRepository : IRepository<Order>
     {

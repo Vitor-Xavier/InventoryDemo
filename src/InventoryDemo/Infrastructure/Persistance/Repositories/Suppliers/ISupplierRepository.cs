@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace InventoryDemo.Infrastructure.Repositories.Suppliers
+namespace InventoryDemo.Infrastructure.Persistance.Repositories.Suppliers
 {
     public interface ISupplierRepository : IRepository<Supplier>
     {

@@ -3,7 +3,7 @@ using InventoryDemo.Domain.Models;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace InventoryDemo.Infrastructure.Repositories.OrderImports
+namespace InventoryDemo.Infrastructure.Persistance.Repositories.OrderImports
 {
     public interface IOrderImportRepository : IRepository<OrderImport>
     {

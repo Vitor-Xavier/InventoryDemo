@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace InventoryDemo.Infrastructure.Repositories
+namespace InventoryDemo.Infrastructure.Persistance.Repositories
 {
     public interface IRepository<TEntity> where TEntity : BaseEntity
     {

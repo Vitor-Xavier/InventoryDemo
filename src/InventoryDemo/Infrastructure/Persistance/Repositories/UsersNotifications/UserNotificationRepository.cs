@@ -1,12 +1,12 @@
 ﻿using EFCore.BulkExtensions;
 using InventoryDemo.Domain.Models;
-using InventoryDemo.Infrastructure.Context;
+using InventoryDemo.Infrastructure.Persistance.Context;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace InventoryDemo.Infrastructure.Repositories.UsersNotifications
+namespace InventoryDemo.Infrastructure.Persistance.Repositories.UsersNotifications
 {
     public class UserNotificationRepository : Repository<UserNotification, InventoryContext>, IUserNotificationRepository
     {

@@ -1,12 +1,12 @@
 ﻿using InventoryDemo.Crosscutting;
 using InventoryDemo.Domain.Models;
-using InventoryDemo.Infrastructure.Context;
+using InventoryDemo.Infrastructure.Persistance.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace InventoryDemo.Infrastructure.Repositories.OrderImports
+namespace InventoryDemo.Infrastructure.Persistance.Repositories.OrderImports
 {
     public class OrderImportRepository : Repository<OrderImport, InventoryContext>, IOrderImportRepository
     {

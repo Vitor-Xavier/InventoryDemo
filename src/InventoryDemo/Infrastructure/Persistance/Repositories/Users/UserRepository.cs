@@ -1,13 +1,13 @@
 ﻿using InventoryDemo.Crosscutting;
 using InventoryDemo.Domain.Models;
-using InventoryDemo.Infrastructure.Context;
+using InventoryDemo.Infrastructure.Persistance.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace InventoryDemo.Infrastructure.Repositories.Users
+namespace InventoryDemo.Infrastructure.Persistance.Repositories.Users
 {
     public class UserRepository : Repository<User, InventoryContext>, IUserRepository
     {

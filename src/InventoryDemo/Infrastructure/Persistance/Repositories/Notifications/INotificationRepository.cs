@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace InventoryDemo.Infrastructure.Repositories.Notifications
+namespace InventoryDemo.Infrastructure.Persistance.Repositories.Notifications
 {
     public interface INotificationRepository : IRepository<Notification>
     {

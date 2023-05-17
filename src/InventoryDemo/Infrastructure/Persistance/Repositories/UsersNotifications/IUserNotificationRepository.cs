@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace InventoryDemo.Infrastructure.Repositories.UsersNotifications
+namespace InventoryDemo.Infrastructure.Persistance.Repositories.UsersNotifications
 {
     public interface IUserNotificationRepository : IRepository<UserNotification>
     {

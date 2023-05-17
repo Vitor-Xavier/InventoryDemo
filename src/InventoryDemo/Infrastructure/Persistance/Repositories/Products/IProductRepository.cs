@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace InventoryDemo.Infrastructure.Repositories.Products
+namespace InventoryDemo.Infrastructure.Persistance.Repositories.Products
 {
     public interface IProductRepository : IRepository<Product>
     {

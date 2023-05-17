@@ -1,9 +1,9 @@
 ﻿using InventoryDemo.Crosscutting;
 using InventoryDemo.Domain.Models;
 using InventoryDemo.Infrastructure.Hubs;
-using InventoryDemo.Infrastructure.Repositories.Notifications;
-using InventoryDemo.Infrastructure.Repositories.Users;
-using InventoryDemo.Infrastructure.Repositories.UsersNotifications;
+using InventoryDemo.Infrastructure.Persistance.Repositories.Notifications;
+using InventoryDemo.Infrastructure.Persistance.Repositories.Users;
+using InventoryDemo.Infrastructure.Persistance.Repositories.UsersNotifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using System;

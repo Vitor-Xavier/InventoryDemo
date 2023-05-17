@@ -1,8 +1,8 @@
 using InventoryDemo.BackgroundServices.ScheduledServices;
 using InventoryDemo.Crosscutting.Events;
 using InventoryDemo.Extensions;
-using InventoryDemo.Infrastructure.Context;
 using InventoryDemo.Infrastructure.Hubs;
+using InventoryDemo.Infrastructure.Persistance.Context;
 using InventoryDemo.Services.Cache;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
