@@ -32,7 +32,7 @@ namespace InventoryDemo.Infrastructure.Persistance.Repositories.Orders
             _context.Orders.AsNoTracking().Where(order => order.OrderId == orderId).Select(order => new OrderDto(order.OrderId, order.Date, order.Note)).FirstOrDefaultAsync(cancellationToken);
 
         public async Task<IEnumerable<OrderTableDto>> GetOrders(int skip, int take, CancellationToken cancellationToken = default) =>
-            await _context.Orders.AsNoTracking().OrderBy(order => order.OrderId).Select(order => new OrderTableDto(order.OrderId, order.Date, order.Note)).Skip(skip).Take(take).ToListAsync(cancellationToken);
+            await _context.Orders.AsNoTracking().Where(order => !order.Deleted).OrderBy(order => order.OrderId).Select(order => new OrderTableDto(order.OrderId, order.Date, order.Note)).Skip(skip).Take(take).ToListAsync(cancellationToken);
 
         public async Task BulkInsert(IList<Order> orders, CancellationToken cancellationToken = default)
         {

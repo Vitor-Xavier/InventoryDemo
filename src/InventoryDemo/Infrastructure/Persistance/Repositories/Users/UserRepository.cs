@@ -26,7 +26,7 @@ namespace InventoryDemo.Infrastructure.Persistance.Repositories.Users
             await _context.Users.AsNoTracking().OrderBy(user => user.Name).Select(user => new UserDto(user.UserId, user.Username, user.Name, user.Email)).ToListAsync(cancellationToken);
 
         public async Task<IEnumerable<UserTableDto>> GetUsers(int skip, int take, CancellationToken cancellationToken = default) =>
-            await _context.Users.AsNoTracking().OrderBy(user => user.Name).Select(user => new UserTableDto(user.UserId, user.Username, user.Name, user.Email)).Skip(skip).Take(take).ToListAsync(cancellationToken);
+            await _context.Users.AsNoTracking().Where(user => !user.Deleted).OrderBy(user => user.Name).Select(user => new UserTableDto(user.UserId, user.Username, user.Name, user.Email)).Skip(skip).Take(take).ToListAsync(cancellationToken);
 
         public Task<int> GetTotalUsers(CancellationToken cancellationToken = default) =>
             _context.Users.AsNoTracking().Where(user => !user.Deleted).CountAsync(cancellationToken);

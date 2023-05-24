@@ -14,7 +14,7 @@ namespace InventoryDemo.Infrastructure.Persistance.Repositories.Notifications
         public NotificationRepository(InventoryContext context) : base(context) { }
 
         public async Task<IEnumerable<NotificationListDto>> GetNotificationsByUsername(string username, int skip, int take, CancellationToken cancellationToken = default) =>
-            await _context.UserNotifications.AsNoTracking().Where(userNotification => userNotification.User.Username == username)
+            await _context.UserNotifications.AsNoTracking().Where(userNotification => !userNotification.Deleted && userNotification.User.Username == username).OrderByDescending(notification => notification.CreatedAt)
                 .Select(userNotification => new NotificationListDto(userNotification.NotificationId, userNotification.Notification.Title, userNotification.Notification.Content, userNotification.Notification.Type, userNotification.Notification.Route, userNotification.ReadAt)).Skip(skip).Take(take).ToListAsync(cancellationToken);
 
         public Task<int> GetTotalNotificationsByUsername(string username, CancellationToken cancellationToken = default) =>
