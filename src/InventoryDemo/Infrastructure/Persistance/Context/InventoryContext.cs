@@ -1,4 +1,5 @@
 ﻿using InventoryDemo.Domain.Models;
+using InventoryDemo.Infrastructure.Persistance.Configurations;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace InventoryDemo.Infrastructure.Persistance.Context
         public InventoryContext(DbContextOptions<InventoryContext> options) : base(options) { }
 
         public DbSet<User> Users { get; set; }
+
+        public DbSet<Category> Categories { get; set; }
 
         public DbSet<Product> Products { get; set; }
 
@@ -41,6 +44,8 @@ namespace InventoryDemo.Infrastructure.Persistance.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(CategoryConfiguration).Assembly);
+
             modelBuilder.Entity<OrderProduct>().HasKey(o => new { o.OrderId, o.ProductId });
             modelBuilder.Entity<UserNotification>().HasKey(u => new { u.UserId, u.NotificationId });
         }

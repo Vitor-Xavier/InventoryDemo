@@ -27,6 +27,12 @@ namespace InventoryDemo.Domain.Models
         public decimal Quantity { get; set; }
 
         [JsonIgnore]
+        public int CategoryId { get; set; }
+
+        [JsonIgnore]
+        public virtual Category Category { get; set; }
+
+        [JsonIgnore]
         public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new HashSet<OrderProduct>();
 
         public override bool Equals(object obj) => obj is Product product && product.ProductId == ProductId;
