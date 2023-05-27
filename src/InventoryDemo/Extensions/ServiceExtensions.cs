@@ -3,6 +3,7 @@ using InventoryDemo.BackgroundServices.ScheduledServices;
 using InventoryDemo.Consumers;
 using InventoryDemo.Crosscutting;
 using InventoryDemo.Infrastructure.Hubs;
+using InventoryDemo.Infrastructure.Persistance.Repositories.Categories;
 using InventoryDemo.Infrastructure.Persistance.Repositories.Confirmations;
 using InventoryDemo.Infrastructure.Persistance.Repositories.Notifications;
 using InventoryDemo.Infrastructure.Persistance.Repositories.OrderExports;
@@ -15,6 +16,7 @@ using InventoryDemo.Infrastructure.Persistance.Repositories.UsersNotifications;
 using InventoryDemo.Providers;
 using InventoryDemo.Services.CancellationHashs.OrderExports;
 using InventoryDemo.Services.CancellationHashs.OrderImports;
+using InventoryDemo.Services.Categories;
 using InventoryDemo.Services.Confirmations;
 using InventoryDemo.Services.Contexts;
 using InventoryDemo.Services.Factories;
@@ -43,6 +45,7 @@ namespace InventoryDemo.Extensions
     {
         public static void ConfigureServices(this IServiceCollection services)
         {
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ISupplierService, SupplierService>();
             services.AddScoped<IOrderService, OrderService>();
@@ -58,6 +61,7 @@ namespace InventoryDemo.Extensions
 
         public static void ConfigureRepositories(this IServiceCollection services)
         {
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ISupplierRepository, SupplierRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
